@@ -29,7 +29,7 @@ open class UnlockDeviceTask : DefaultTask() {
         const val MINIMUM_DIGITS = 4
     }
 
-    lateinit var device: IDevice
+    private lateinit var device: IDevice
 
     @Input
     lateinit var android: AppExtension

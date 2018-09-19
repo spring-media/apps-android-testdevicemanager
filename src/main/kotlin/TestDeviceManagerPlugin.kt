@@ -4,7 +4,7 @@ import org.gradle.api.Project
 import tasks.LockDeviceTask
 import tasks.UnlockDeviceTask
 
-class DeviceUnlockerPlugin : Plugin<Project> {
+class TestDeviceManagerPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         val extension = target.extensions.create("deviceUnlocker", DeviceUnlockerExtension::class.java)
