@@ -1,10 +1,7 @@
 import com.android.build.gradle.AppExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import tasks.DisableAnimationsTask
-import tasks.EnableAnimationsTask
-import tasks.LockDeviceTask
-import tasks.UnlockDeviceTask
+import tasks.*
 
 class TestDeviceManagerPlugin : Plugin<Project> {
 
@@ -16,7 +13,7 @@ class TestDeviceManagerPlugin : Plugin<Project> {
                 val androidAppExtension = subProject.extensions.getByType(AppExtension::class.java)
                 val bridge = androidAppExtension.createAndroidDebugBridge()
 
-                target.tasks.create("connectedUnlockDevice", UnlockDeviceTask::class.java) {
+                target.tasks.create("connectedDeviceUnlock", UnlockDeviceTask::class.java) {
                     it.android = androidAppExtension
                     it.bridge = bridge
                     it.unlockBy = extension.unlockBy
@@ -24,18 +21,24 @@ class TestDeviceManagerPlugin : Plugin<Project> {
                     it.password = extension.password
                 }
 
-                target.tasks.create("connectedLockDevice", LockDeviceTask::class.java) {
+                target.tasks.create("connectedDeviceLock", LockDeviceTask::class.java) {
                     it.android = androidAppExtension
                     it.bridge = bridge
                 }
 
-                target.tasks.create("connectedDisableAnimations", DisableAnimationsTask::class.java) {
-                    it.disableAnimations = extension.disableAnimations
+                target.tasks.create("connectedAnimationsDisable", DisableAnimationsTask::class.java) {
                     it.bridge = bridge
                 }
 
-                target.tasks.create("connectedEnableAnimations", EnableAnimationsTask::class.java) {
-                    it.enableAnimations = extension.enableAnimations
+                target.tasks.create("connectedAnimationsEnable", EnableAnimationsTask::class.java) {
+                    it.bridge = bridge
+                }
+
+                target.tasks.create("connectedStayAwakeEnable", EnableStayAwakeTask::class.java) {
+                    it.bridge = bridge
+                }
+
+                target.tasks.create("connectedStayAwakeDisable", DisableStayAwakeTask::class.java) {
                     it.bridge = bridge
                 }
             }

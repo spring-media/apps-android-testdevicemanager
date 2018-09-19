@@ -20,25 +20,17 @@ open class EnableAnimationsTask : DefaultTask() {
     @Input
     lateinit var bridge: AndroidDebugBridge
 
-    @Input
-    var enableAnimations: Boolean = false
-
     @TaskAction
     fun enableAnimations() {
-        if (enableAnimations) {
-            bridge.devicesCanBeFound()
+        bridge.devicesCanBeFound()
 
-            //todo kr: read animation values from file compare with current value and start enabling if they differ
+        //todo kr: read animation values from file compare with current value and start enabling if they differ
 
-            bridge.devices.forEach { device ->
-                animationSettings.forEach {
-                    device.setAnimationValue(it, 1)
-                    device.printAnimationValue(it)
-                }
-
+        bridge.devices.forEach { device ->
+            animationSettings.forEach {
+                device.setAnimationValue(it, 1)
+                device.printAnimationValue(it)
             }
-        } else {
-            println("Enabling animations was not activated in build script.")
         }
     }
 }

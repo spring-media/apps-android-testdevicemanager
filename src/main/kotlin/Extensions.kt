@@ -62,12 +62,31 @@ fun IDevice.setAnimationValue(animation: String, value: Int) {
 
 fun IDevice.printAnimationValue(animation: String) {
     val output = this.getAnimationValue(animation)
-    println("$animation for ${this.getProperty("ro.product.model")} is $output now.")
+    println("$animation for ${this.details()} is $output now.")
 }
 
 fun IDevice.getAnimationValue(animation: String): Int {
     val output = this.executeShellCommandWithOutput("settings get global ${animation}_scale")
     return output.trim().toInt()
+}
+
+fun IDevice.setStayAwakeStatus(status: Boolean) {
+    if (status) {
+        this.executeShellCommandWithOutput("settings put global stay_on_while_plugged_in 2")
+    } else {
+        this.executeShellCommandWithOutput("settings put global stay_on_while_plugged_in 0")
+    }
+}
+
+fun IDevice.getStayAwakeStatus(): Int {
+    val output = this.executeShellCommandWithOutput("settings get global stay_on_while_plugged_in")
+    return output.trim().toInt()
+}
+
+fun IDevice.details(): String {
+    return "${this.getProperty("ro.product.model")} " +
+            "Android ${this.getProperty("ro.build.version.release")} " +
+            "(API level: ${this.getProperty("ro.build.version.sdk")})"
 }
 
 fun AndroidDebugBridge.devicesCanBeFound() {

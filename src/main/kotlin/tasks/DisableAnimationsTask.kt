@@ -19,25 +19,18 @@ open class DisableAnimationsTask : DefaultTask() {
     @Input
     lateinit var bridge: AndroidDebugBridge
 
-    @Input
-    var disableAnimations: Boolean = false
-
     @TaskAction
     fun disableAnimations() {
-        if (disableAnimations) {
-            bridge.devicesCanBeFound()
+        bridge.devicesCanBeFound()
 
-            bridge.devices.forEach { device ->
+        bridge.devices.forEach { device ->
 
-                //todo kr: get animation values from device and save them in a file
+            //todo kr: get animation values from device and save them in a file
 
-                animationSettings.forEach {
-                    device.setAnimationValue(it, 0)
-                    device.printAnimationValue(it)
-                }
+            animationSettings.forEach {
+                device.setAnimationValue(it, 0)
+                device.printAnimationValue(it)
             }
-        } else {
-            println("Disabling animations was not activated in build script.")
         }
     }
 }

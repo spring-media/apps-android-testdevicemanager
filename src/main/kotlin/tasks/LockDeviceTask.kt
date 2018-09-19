@@ -5,6 +5,7 @@ import ShellCommands.INPUT_SLEEP_CALL
 import com.android.build.gradle.AppExtension
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.IDevice
+import details
 import devicesCanBeFound
 import executeShellCommandWithOutput
 import getSdkVersion
@@ -41,12 +42,12 @@ open class LockDeviceTask : DefaultTask() {
 
         if (sdkVersion < 20) {
             if (device.isDisplayOn()) {
-                println("deactivating Display by power button")
                 device.executeShellCommandWithOutput(INPUT_PRESS_POWER_BUTTON)
             }
         } else {
-            println("deactivating Display by sleep call")
             device.executeShellCommandWithOutput(INPUT_SLEEP_CALL)
         }
+
+        println("Screen of device ${device.details()} deactivated & locked.")
     }
 }

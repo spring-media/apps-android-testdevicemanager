@@ -7,6 +7,7 @@ import ShellCommands.INPUT_WAKE_UP_CALL
 import com.android.build.gradle.AppExtension
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.IDevice
+import details
 import devicesCanBeFound
 import executeShellCommandWithOutput
 import getDeviceScreenResolution
@@ -72,9 +73,7 @@ open class UnlockDeviceTask : DefaultTask() {
                 }
             }
 
-            println("Screen of device ${device.getProperty("ro.product.model")} - " +
-                            "Android ${device.getProperty("ro.build.version.release")} " +
-                            "(API level: ${device.getProperty("ro.build.version.sdk")}) should be activated & unlocked.")
+            println("Screen of device ${device.details()} activated & unlocked.")
         }
     }
 
