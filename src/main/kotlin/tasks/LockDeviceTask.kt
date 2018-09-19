@@ -17,7 +17,7 @@ import org.gradle.api.tasks.TaskAction
 open class LockDeviceTask : DefaultTask() {
 
     init {
-        group = "deviceSetup"
+        group = "device setup"
         description = "lock the device"
     }
 
@@ -29,7 +29,7 @@ open class LockDeviceTask : DefaultTask() {
 
     @TaskAction
     fun lock() {
-        devicesCanBeFound(bridge)
+        bridge.devicesCanBeFound()
 
         bridge.devices.forEach {
             deactivateDisplay(it)
@@ -37,10 +37,10 @@ open class LockDeviceTask : DefaultTask() {
     }
 
     private fun deactivateDisplay(device: IDevice) {
-        val sdkVersion = getSdkVersion(device)
+        val sdkVersion = device.getSdkVersion()
 
         if (sdkVersion < 20) {
-            if (isDisplayOn(device)) {
+            if (device.isDisplayOn()) {
                 println("deactivating Display by power button")
                 device.executeShellCommandWithOutput(INPUT_PRESS_POWER_BUTTON)
             }

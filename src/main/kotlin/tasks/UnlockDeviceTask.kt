@@ -21,7 +21,7 @@ import org.gradle.api.tasks.TaskAction
 open class UnlockDeviceTask : DefaultTask() {
 
     init {
-        group = "deviceSetup"
+        group = "device setup"
         description = "unlock the device"
     }
 
@@ -48,7 +48,7 @@ open class UnlockDeviceTask : DefaultTask() {
 
     @TaskAction
     fun unlock() {
-        devicesCanBeFound(bridge)
+        bridge.devicesCanBeFound()
 
         bridge.devices.forEach { device ->
 
@@ -79,11 +79,11 @@ open class UnlockDeviceTask : DefaultTask() {
     }
 
     private fun activateDisplay() {
-        val sdkVersion = getSdkVersion(device)
+        val sdkVersion = device.getSdkVersion()
 
         println("sdkVersion: $sdkVersion")
         if (sdkVersion < 20) {
-            if (!isDisplayOn(device)) {
+            if (!device.isDisplayOn()) {
                 println("activating Display")
                 device.executeShellCommandWithOutput(INPUT_PRESS_POWER_BUTTON)
             }
@@ -94,8 +94,8 @@ open class UnlockDeviceTask : DefaultTask() {
     }
 
     private fun unlockBySwipe() {
-        val screenWidth = getDeviceScreenResolution(device).xCoordinate
-        val screenHeight = getDeviceScreenResolution(device).yCoordinate
+        val screenWidth = device.getDeviceScreenResolution().xCoordinate
+        val screenHeight = device.getDeviceScreenResolution().yCoordinate
         val inputSwipeToUnlock = "input swipe ${screenWidth / 2} ${screenHeight - (screenHeight / 5)} " +
                 "${screenWidth - (screenWidth / 5)} ${screenHeight / 5}"
 
@@ -105,9 +105,9 @@ open class UnlockDeviceTask : DefaultTask() {
     }
 
     private fun unlockBy(passPhrase: String) {
-        if (!isDisplayOn(device)) activateDisplay()
+        if (!device.isDisplayOn()) activateDisplay()
 
-        if (!isDeviceUnlocked(device)) {
+        if (!device.isDeviceUnlocked()) {
             device.executeShellCommandWithOutput("$INPUT_TEXT $passPhrase")
             device.executeShellCommandWithOutput(INPUT_PRESS_ENTER)
         }
