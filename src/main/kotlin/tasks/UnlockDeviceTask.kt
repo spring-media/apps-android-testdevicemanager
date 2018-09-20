@@ -114,7 +114,7 @@ open class UnlockDeviceTask : DefaultTask() {
 
     private fun validatePin(pin: String) {
         if (pin.isBlank()) {
-            throw GradleException("Pin maintained to unlock the device is blank.")
+            throw GradleException("Pin to unlock the device is blank or not maintained in the build script.")
         }
 
         pin.forEach {
@@ -131,7 +131,7 @@ open class UnlockDeviceTask : DefaultTask() {
 
     private fun validatePassword(password: String) {
         if (password.isBlank()) {
-            throw GradleException("Password to unlock the device is blank.")
+            throw GradleException("Password to unlock the device is blank or not maintained in build script.")
         }
     }
 }

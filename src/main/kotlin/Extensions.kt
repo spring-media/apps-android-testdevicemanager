@@ -1,4 +1,5 @@
 import ShellCommands.DUMPSYS_INPUT_METHOD
+import ShellCommands.DUMPSYS_WIFI
 import ShellCommands.DUMPSYS_WINDOW
 import ShellCommands.GETPROP_DEVICE_SDK_VERSION
 import com.android.build.gradle.AppExtension
@@ -46,6 +47,15 @@ fun IDevice.analyzeOutputOfShellCommandByRegex(shellCommand: String, regex: Stri
     }
 
     return information
+}
+
+fun IDevice.checkWifi(wifi: String) {
+    val output = this.analyzeOutputOfShellCommandByRegex(DUMPSYS_WIFI, "mNetworkInfo .+ extra: \"(.+)\"")
+    val currentWifi = output.group(1)
+
+    if (currentWifi != wifi) {
+        throw GradleException("Device ${this.details()} is not connected to wifi with name $wifi")
+    }
 }
 
 fun IDevice.executeShellCommandWithOutput(shellCommand: String): String {

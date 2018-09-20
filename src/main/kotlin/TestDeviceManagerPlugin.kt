@@ -41,6 +41,11 @@ class TestDeviceManagerPlugin : Plugin<Project> {
                 target.tasks.create("connectedStayAwakeDisable", DisableStayAwakeTask::class.java) {
                     it.bridge = bridge
                 }
+
+                target.tasks.create("connetedCheckWifi", CheckWifiTask::class.java) {
+                    it.wifi = extension.wifi
+                    it.bridge = bridge
+                }
             }
         }
     }
