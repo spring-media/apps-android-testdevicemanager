@@ -19,7 +19,7 @@ The following things can be managed by the plugin:
 # Usage
 
 ``` 
-deviceUnlocker {
+testDeviceManager {
     unlockBy = "power button | swipe | pin | password"
     pin = "9999"
     password = "password"
