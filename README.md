@@ -2,7 +2,7 @@
 Gradle custom plugin to setup test devices.
 
 # What is it?
-Testdevicemanager is a custom gradle plugin written in Kotlin.
+Testdevicemanager is a custom gradle plugin written in Kotlin. It uses ```adb commands``` to get and set device information. Therefore no additional access rights for connected mobile devices are required.
 
 # What's its purpose?
 Testdevicemanager can be used to set up test devices for espresso ui testing.
@@ -22,6 +22,7 @@ The following things can be managed by the plugin:
 //maintain steps for integrating into project
 
 # Setup
+All of the following extension values can be maintained but do not need to be used at all.
 ``` 
 testDeviceManager {
     unlockBy = "power button | swipe | pin | password"
@@ -30,6 +31,17 @@ testDeviceManager {
     wifi = "wifi-name"
 }
 ```
+# Compatibility
+The plugin was tested on several devices of different brands and different Android versions. 
+
+It will run on ```Android 4.1.2 - Android 8```. 
+
+However, there might be device - OS version combinations that where not tested and might result in a not working plugin.
+
+# Preconditions
+- Test devices need to be connected to the machine running this plugin.
+- Developer options need to be activated on each connected test device.
+- ADB connections needs to be established between test device and developer machine / server.
 
 # Usage 
 The following tasks will be added to the ```device setup``` section of the gradle tasks
