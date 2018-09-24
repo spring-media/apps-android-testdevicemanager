@@ -1,7 +1,8 @@
 # apps-android-testdevicemanager
 Gradle custom plugin to setup test devices.
 
-This custom gradle plugin can be used to set up test devices in a CI build. 
+# What is it?
+Testdevicemanager can be used to set up test devices in a CI build. 
 The main purpose is to setup Android test devices for espresso ui testing.
 
 # Features
