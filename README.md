@@ -10,9 +10,9 @@ The following things can be managed by the plugin:
 
 - Locking / Unlocking the device - The device can be unlocked via pressing the power button, swiping, entering a pin or a password
 
-- Disabling / Enabling animations - To make sure espresso ui tests run smoothly, animations can be deactivated in the developer options 
+- Disabling / Enabling animations - To make sure espresso ui tests run smoothly, animations can be deactivated in the developer options of the test device
 
-- Enabling / Disabling the stay awake mode - The device's stay awake mode can be activated, to make sure that the test device does not switch of the screen during testing
+- Enabling / Disabling the stay awake mode - The device's stay awake mode can be activated in the developer options of the test device, to make sure that the test device does not switch of the screen during testing
 
 - Checking for connection to a specific WLAN - A check for a specific WLAN can be done
 
