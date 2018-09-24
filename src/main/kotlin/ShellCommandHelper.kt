@@ -8,5 +8,10 @@ object ShellCommands {
     const val INPUT_PRESS_POWER_BUTTON = "input keyevent 26"
     const val INPUT_PRESS_ENTER = "input keyevent 66"
     const val INPUT_TEXT = "input text"
+    const val SETTINGS_GET_ANDROID_ID = "settings get secure android_id"
+    const val SETTINGS_PUT_STAY_ON = "settings put global stay_on_while_plugged_in"
+    const val SETTINGS_GET_STAY_ON = "settings get global stay_on_while_plugged_in"
+    const val SETTINGS_PUT_GLOBAL = "settings put global"
+    const val SETTINGS_GET_GLOBAL = "settings get global"
 }
 

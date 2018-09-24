@@ -2,6 +2,7 @@ package tasks
 
 import ShellCommands.INPUT_PRESS_POWER_BUTTON
 import ShellCommands.INPUT_SLEEP_CALL
+import TestDeviceManagerPlugin.Companion.GROUP_NAME
 import com.android.build.gradle.AppExtension
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.IDevice
@@ -18,7 +19,7 @@ import org.gradle.api.tasks.TaskAction
 open class LockDeviceTask : DefaultTask() {
 
     init {
-        group = "device setup"
+        group = GROUP_NAME
         description = "lock the device"
     }
 

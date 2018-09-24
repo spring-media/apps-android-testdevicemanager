@@ -1,5 +1,6 @@
 package tasks
 
+import TestDeviceManagerPlugin.Companion.GROUP_NAME
 import com.android.ddmlib.AndroidDebugBridge
 import details
 import devicesCanBeFound
@@ -13,7 +14,7 @@ import setStayAwakeStatus
 open class EnableStayAwakeTask : DefaultTask() {
 
     init {
-        group = "device setup"
+        group = GROUP_NAME
         description = "Activate the Stay Awake settings in the developer options."
     }
 

@@ -4,6 +4,7 @@ import ShellCommands.INPUT_PRESS_ENTER
 import ShellCommands.INPUT_PRESS_POWER_BUTTON
 import ShellCommands.INPUT_TEXT
 import ShellCommands.INPUT_WAKE_UP_CALL
+import TestDeviceManagerPlugin.Companion.GROUP_NAME
 import com.android.build.gradle.AppExtension
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.IDevice
@@ -22,7 +23,7 @@ import org.gradle.api.tasks.TaskAction
 open class UnlockDeviceTask : DefaultTask() {
 
     init {
-        group = "device setup"
+        group = GROUP_NAME
         description = "unlock the device"
     }
 
@@ -80,14 +81,11 @@ open class UnlockDeviceTask : DefaultTask() {
     private fun activateDisplay() {
         val sdkVersion = device.getSdkVersion()
 
-        println("sdkVersion: $sdkVersion")
         if (sdkVersion < 20) {
             if (!device.isDisplayOn()) {
-                println("activating Display")
                 device.executeShellCommandWithOutput(INPUT_PRESS_POWER_BUTTON)
             }
         } else {
-            println("activating Display")
             device.executeShellCommandWithOutput(INPUT_WAKE_UP_CALL)
         }
     }
@@ -97,8 +95,6 @@ open class UnlockDeviceTask : DefaultTask() {
         val screenHeight = device.getDeviceScreenResolution().yCoordinate
         val inputSwipeToUnlock = "input swipe ${screenWidth / 2} ${screenHeight - (screenHeight / 5)} " +
                 "${screenWidth - (screenWidth / 5)} ${screenHeight / 5}"
-
-        println("execute SWIPE_TO_UNLOCK: input swipe $inputSwipeToUnlock")
 
         device.executeShellCommandWithOutput(inputSwipeToUnlock)
     }

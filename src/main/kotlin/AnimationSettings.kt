@@ -1,2 +1,1 @@
-
-val animationSettings = listOf("window_animation", "transition_animation", "animator_duration")
+val animationScales = listOf("window_animation", "transition_animation", "animator_duration")

@@ -1,5 +1,6 @@
 package tasks
 
+import TestDeviceManagerPlugin.Companion.GROUP_NAME
 import checkWifi
 import com.android.ddmlib.AndroidDebugBridge
 import details
@@ -12,7 +13,7 @@ import org.gradle.api.tasks.TaskAction
 open class CheckWifiTask : DefaultTask() {
 
     init {
-        group = "device setup"
+        group = GROUP_NAME
         description = "check if a connection to a specific wifi was established"
     }
 
