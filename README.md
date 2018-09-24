@@ -42,3 +42,7 @@ connectedDeviceUnlock
 connectedStayAwakeDisable
 connectedStayAwakeEnable
 ```
+Run these tasks before you run your espresso tests and setup your test devices.
+
+# More detailed information
+// add Link to article on Medium.ocm
