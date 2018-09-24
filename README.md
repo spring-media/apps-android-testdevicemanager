@@ -2,8 +2,10 @@
 Gradle custom plugin to setup test devices.
 
 # What is it?
-Testdevicemanager can be used to set up test devices in a CI build. 
-The main purpose is to setup Android test devices for espresso ui testing.
+Testdevicemanager is a custom gradle plugin written in Kotlin.
+
+# What's its purpose?
+Testdevicemanager can be used to set up test devices for espresso ui testing.
 
 # Features
 The following things can be managed by the plugin:
@@ -14,11 +16,12 @@ The following things can be managed by the plugin:
 
 - Enabling / Disabling the stay awake mode - The device's stay awake mode can be activated in the developer options of the test device, to make sure that the test device does not switch of the screen during testing
 
-- Checking for connection to a specific WLAN - A check for a specific WLAN can be done
+- Checking for connection to a specific WLAN - A check for a connection to a specific WLAN can be done
 
+# Integration into the project
+//maintain steps for integrating into project
 
-# Usage
-
+# Setup
 ``` 
 testDeviceManager {
     unlockBy = "power button | swipe | pin | password"
@@ -26,4 +29,16 @@ testDeviceManager {
     password = "password"
     wifi = "wifi-name"
 }
+```
+
+# Usage 
+The following tasks will be added to the ```device setup``` section of the gradle tasks
+```
+connectedAnimationsDisable
+connectedAnimationsEnable
+connectedCheckWifi
+connectedDeviceLock
+connectedDeviceUnlock
+connectedStayAwakeDisable
+connectedStayAwakeEnable
 ```
