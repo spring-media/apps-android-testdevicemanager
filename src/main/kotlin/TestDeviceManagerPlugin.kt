@@ -20,7 +20,7 @@ class TestDeviceManagerPlugin : Plugin<Project> {
 
 
     override fun apply(target: Project) {
-        extension = target.extensions.create("deviceUnlocker", TestDeviceManagerExtension::class.java)
+        extension = target.extensions.create("testDeviceManager", TestDeviceManagerExtension::class.java)
 
         project = target
 
