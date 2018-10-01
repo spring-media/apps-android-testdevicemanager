@@ -1,0 +1,14 @@
+branches:
+  only:
+  - master
+  - develop
+  
+  script:
+  - ./gradlew app:test
+
+deploy:
+  - provider: script
+    skip_cleanup: true
+    script: python deploy.py
+    on:
+      all_branches: true
