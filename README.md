@@ -1,4 +1,3 @@
-[![Version](https://img.shields.io/badge/style-7-green.svg?style=flat&label=version)]()
 [![Build Status](https://travis-ci.com/spring-media/apps-android-testdevicemanager.svg?token=xAVzxLGs5Eppk88QPiED&branch=master)](https://travis-ci.com/spring-media/apps-android-testdevicemanager)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
