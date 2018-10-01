@@ -7,3 +7,8 @@ branches:
   
 script:
 - ./gradlew check --stacktrace
+
+deploy:
+  - provider: script
+    script: ./publishVersion.sh
+    skip_cleanup: true
