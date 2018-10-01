@@ -1,3 +1,4 @@
+[![Version](https://img.shields.io/badge/style-253-green.svg?style=flat&label=version)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # apps-android-testdevicemanager
