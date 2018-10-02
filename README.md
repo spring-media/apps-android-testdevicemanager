@@ -2,7 +2,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 # apps-android-testdevicemanager
-Gradle custom plugin to setup test devices.
+Gradle custom plugin to setup android test devices.
 
 # What is it?
 Testdevicemanager is a custom gradle plugin written in Kotlin. It uses ```adb commands``` to get and set device information. Therefore no additional access rights for connected mobile devices are required.
