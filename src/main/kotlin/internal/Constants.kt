@@ -1,5 +1,6 @@
+package internal
+
 object ShellCommands {
-    const val GETPROP_DEVICE_SDK_VERSION = "getprop ro.build.version.sdk"
     const val DUMPSYS_INPUT_METHOD = "dumpsys input_method"
     const val DUMPSYS_WINDOW = "dumpsys window"
     const val DUMPSYS_WIFI = "dumpsys wifi"
@@ -13,5 +14,9 @@ object ShellCommands {
     const val SETTINGS_GET_STAY_ON = "settings get global stay_on_while_plugged_in"
     const val SETTINGS_PUT_GLOBAL = "settings put global"
     const val SETTINGS_GET_GLOBAL = "settings get global"
+}
+
+object TaskInfo {
+    const val GROUP_NAME = "device setup"
 }
 

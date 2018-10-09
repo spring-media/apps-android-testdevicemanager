@@ -1,24 +1,16 @@
 package tasks
 
-import ShellCommands.INPUT_PRESS_ENTER
-import ShellCommands.INPUT_PRESS_POWER_BUTTON
-import ShellCommands.INPUT_TEXT
-import ShellCommands.INPUT_WAKE_UP_CALL
-import TestDeviceManagerPlugin.Companion.GROUP_NAME
-import com.android.build.gradle.AppExtension
-import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.IDevice
-import details
-import devicesCanBeFound
-import executeShellCommandWithOutput
-import getDeviceScreenResolution
-import getSdkVersion
-import isDeviceUnlocked
-import isDisplayOn
+import internal.DeviceCommunicator
+import internal.DeviceWrapper
+import internal.ShellCommands.INPUT_PRESS_POWER_BUTTON
+import internal.ShellCommands.INPUT_WAKE_UP_CALL
+import internal.TaskInfo.GROUP_NAME
+import internal.devicesCanBeFound
 import org.gradle.api.DefaultTask
-import org.gradle.api.GradleException
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
+import tasks.internal.Unlocker
 
 open class UnlockDeviceTask : DefaultTask() {
 
@@ -32,9 +24,7 @@ open class UnlockDeviceTask : DefaultTask() {
     }
 
     private lateinit var device: IDevice
-
-    @Input
-    lateinit var android: AppExtension
+    private lateinit var deviceWrapper: DeviceWrapper
 
     @Input
     lateinit var unlockBy: String
@@ -46,88 +36,35 @@ open class UnlockDeviceTask : DefaultTask() {
     lateinit var password: String
 
     @Input
-    lateinit var bridge: AndroidDebugBridge
+    lateinit var communicator: DeviceCommunicator
 
     @TaskAction
     fun unlock() {
+        val bridge = communicator.bridge
+        val provider = communicator.outputReceiverProvider
+
         bridge.devicesCanBeFound()
 
         bridge.devices.forEach { device ->
-
+            deviceWrapper = DeviceWrapper(device, provider)
             this.device = device
 
             activateDisplay()
 
-            when (unlockBy) {
-                "power button" -> {
-                }
-                "swipe"        -> unlockBySwipe()
-                "pin"          -> {
-                    validatePin(pin)
-                    unlockBySwipe()
-                    unlockBy(pin)
-                }
-                "password"     -> {
-                    validatePassword(password)
-                    unlockBySwipe()
-                    unlockBy(password)
-                }
-            }
+            val unlocker = Unlocker(deviceWrapper, unlockBy, pin, password)
+            unlocker.unlock()
 
-            println("Screen of device ${device.details()} activated & unlocked.")
+            println("Screen of device ${deviceWrapper.getDetails()} activated & unlocked.")
         }
     }
 
     private fun activateDisplay() {
-        val sdkVersion = device.getSdkVersion()
-
-        if (sdkVersion < 20) {
-            if (!device.isDisplayOn()) {
-                device.executeShellCommandWithOutput(INPUT_PRESS_POWER_BUTTON)
+        if (!device.version.isGreaterOrEqualThan(20)) {
+            if (!deviceWrapper.isDisplayOn()) {
+                deviceWrapper.executeShellCommandWithOutput(INPUT_PRESS_POWER_BUTTON)
             }
         } else {
-            device.executeShellCommandWithOutput(INPUT_WAKE_UP_CALL)
-        }
-    }
-
-    private fun unlockBySwipe() {
-        val screenWidth = device.getDeviceScreenResolution().xCoordinate
-        val screenHeight = device.getDeviceScreenResolution().yCoordinate
-        val inputSwipeToUnlock = "input swipe ${screenWidth / 2} ${screenHeight - (screenHeight / 5)} " +
-                "${screenWidth - (screenWidth / 5)} ${screenHeight / 5}"
-
-        device.executeShellCommandWithOutput(inputSwipeToUnlock)
-    }
-
-    private fun unlockBy(passPhrase: String) {
-        if (!device.isDisplayOn()) activateDisplay()
-
-        if (!device.isDeviceUnlocked()) {
-            device.executeShellCommandWithOutput("$INPUT_TEXT $passPhrase")
-            device.executeShellCommandWithOutput(INPUT_PRESS_ENTER)
-        }
-    }
-
-    private fun validatePin(pin: String) {
-        if (pin.isBlank()) {
-            throw GradleException("Pin to unlock the device is blank or not maintained in the build script.")
-        }
-
-        pin.forEach {
-            if (!it.isDigit()) {
-                throw GradleException("Part of the pin maintained for unlocking the device is no number: $it .")
-            }
-        }
-
-        val length = pin.length
-        if (length < MINIMUM_DIGITS) {
-            throw GradleException("Pin maintained for unlocking the device contains only $length digits. 4 digits is the minimum.")
-        }
-    }
-
-    private fun validatePassword(password: String) {
-        if (password.isBlank()) {
-            throw GradleException("Password to unlock the device is blank or not maintained in build script.")
+            deviceWrapper.executeShellCommandWithOutput(INPUT_WAKE_UP_CALL)
         }
     }
 }

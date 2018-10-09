@@ -14,9 +14,10 @@ repositories {
 }
 
 dependencies {
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     compile gradleApi()
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
     compile 'com.android.tools.build:gradle:2.3.3'
+
     testImplementation gradleTestKit()
     testImplementation 'junit:junit:4.12'
     testImplementation 'org.mockito:mockito-inline:2.21.0'
@@ -38,7 +39,7 @@ compileTestKotlin {
 
 gradlePlugin {
     plugins {
-        simplePlugin {
+        testDeviceManagerPlugin {
             id = 'de.welt.apps.testdevicemanager'
             implementationClass = 'TestDeviceManagerPlugin'
         }
