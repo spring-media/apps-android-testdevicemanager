@@ -1,3 +1,5 @@
+package internal
+
 import java.io.File
 
 class AnimationScalesPersistenceHelper(private val outDir: File, private val configFile: File) {
@@ -15,15 +17,6 @@ class AnimationScalesPersistenceHelper(private val outDir: File, private val con
     fun getValuesForDevice(androidId: String): AnimationsScales {
         val entry = configFile.readLines().filter { it.contains(androidId) }
         return getValuesFromString(entry[0])
-    }
-
-    private fun getValuesFromString(string: String): AnimationsScales {
-        val values = string.analyzeByRegex(".+ (\\d+.\\d+) (\\d+.\\d+) (\\d+.\\d+)")
-        return AnimationsScales(
-                windowAnimation = values.group(1).toFloat(),
-                transitionAnimation = values.group(2).toFloat(),
-                animatorDuration = values.group(3).toFloat()
-        )
     }
 
     fun hasOneEntryForId(androidId: String) =
@@ -50,5 +43,22 @@ class AnimationScalesPersistenceHelper(private val outDir: File, private val con
             configFile.writeText(newString)
         }
         return configFile
+    }
+
+    fun hasOutputDir() = outDir.exists()
+
+    fun hasConfigFile() = configFile.exists()
+
+    fun deleteConfigFile() = configFile.delete()
+
+    fun deleteOutputDir() = outDir.delete()
+
+    private fun getValuesFromString(string: String): AnimationsScales {
+        val values = string.analyzeByRegex(".+ (\\d+.\\d+) (\\d+.\\d+) (\\d+.\\d+)")
+        return AnimationsScales(
+                windowAnimation = values.group(1).toFloat(),
+                transitionAnimation = values.group(2).toFloat(),
+                animatorDuration = values.group(3).toFloat()
+        )
     }
 }

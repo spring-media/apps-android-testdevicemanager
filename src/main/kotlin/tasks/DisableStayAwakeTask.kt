@@ -1,15 +1,13 @@
 package tasks
 
-import TestDeviceManagerPlugin.Companion.GROUP_NAME
-import com.android.ddmlib.AndroidDebugBridge
-import details
-import devicesCanBeFound
-import getStayAwakeStatus
+import internal.DeviceCommunicator
+import internal.DeviceWrapper
+import internal.StayAwakeStatus.STAY_NOT_AWAKE
+import internal.TaskInfo.GROUP_NAME
+import internal.devicesCanBeFound
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
-import setStayAwakeStatus
-
 
 open class DisableStayAwakeTask : DefaultTask() {
 
@@ -19,18 +17,22 @@ open class DisableStayAwakeTask : DefaultTask() {
     }
 
     @Input
-    lateinit var bridge: AndroidDebugBridge
+    lateinit var communicator: DeviceCommunicator
 
     @TaskAction
     fun disableStayAwake() {
+        val bridge = communicator.bridge
+        val provider = communicator.outputReceiverProvider
+
         bridge.devicesCanBeFound()
 
-        bridge.devices.forEach {
-            if (it.getStayAwakeStatus() != 0) {
-                it.setStayAwakeStatus(false)
-                println("Device ${it.details()} will not stay awake anymore.")
+        bridge.devices.forEach { device ->
+            val deviceWrapper = DeviceWrapper(device, provider)
+            if (deviceWrapper.getStayAwakeStatus() != STAY_NOT_AWAKE.value) {
+                deviceWrapper.setStayAwakeStatus(STAY_NOT_AWAKE)
+                println("Device ${deviceWrapper.getDetails()} will not stay awake anymore.")
             } else {
-                println("Staying awake was already disabled for ${it.details()}")
+                println("Staying awake was already disabled for ${deviceWrapper.getDetails()}")
             }
         }
     }

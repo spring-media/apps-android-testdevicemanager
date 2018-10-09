@@ -1,11 +1,11 @@
 package tasks
 
-import TestDeviceManagerPlugin.Companion.GROUP_NAME
-import checkWifi
-import com.android.ddmlib.AndroidDebugBridge
-import details
-import devicesCanBeFound
+import internal.DeviceCommunicator
+import internal.DeviceWrapper
+import internal.TaskInfo.GROUP_NAME
+import internal.devicesCanBeFound
 import org.gradle.api.DefaultTask
+import org.gradle.api.GradleException
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.TaskAction
 
@@ -21,19 +21,23 @@ open class CheckWifiTask : DefaultTask() {
     lateinit var wifi: String
 
     @Input
-    lateinit var bridge: AndroidDebugBridge
+    lateinit var communicator: DeviceCommunicator
 
     @TaskAction
     fun checkWifi() {
+        val bridge = communicator.bridge
+        val provider = communicator.outputReceiverProvider
+
         if (!wifi.isBlank()) {
             bridge.devicesCanBeFound()
 
-            bridge.devices.forEach {
-                it.checkWifi(wifi)
-                println("Device ${it.details()} is connected to $wifi.")
+            bridge.devices.forEach { device ->
+                val deviceWrapper = DeviceWrapper(device, provider)
+                deviceWrapper.checkWifi(wifi)
+                println("Device ${deviceWrapper.getDetails()} is connected to $wifi.")
             }
         } else {
-            error("No name for wifi maintained in build script.")
+            throw GradleException("No name for wifi maintained in build script.")
         }
     }
 }

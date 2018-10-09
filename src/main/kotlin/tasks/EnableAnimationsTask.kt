@@ -1,23 +1,14 @@
 package tasks
 
-import AnimationScalesPersistenceHelper
-import AnimationsScales
-import TestDeviceManagerPlugin.Companion.GROUP_NAME
-import com.android.ddmlib.AndroidDebugBridge
-import details
-import devicesCanBeFound
-import getAndroidId
-import getAnimationValues
-import hasNoZeros
+import internal.AnimationScalesPersistenceHelper
+import internal.DeviceCommunicator
+import internal.DeviceWrapper
+import internal.TaskInfo.GROUP_NAME
+import internal.devicesCanBeFound
 import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
-import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.OutputDirectory
-import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.TaskAction
-import printAnimationValues
-import setAnimationValues
-import java.io.File
+import tasks.internal.AnimationScalesSwitch
 
 
 open class EnableAnimationsTask : DefaultTask() {
@@ -27,57 +18,27 @@ open class EnableAnimationsTask : DefaultTask() {
         description = "Enables animations for connected devices."
     }
 
-    @Input
-    lateinit var bridge: AndroidDebugBridge
-
-    @OutputFile
-    lateinit var configFile: File
-
-    @OutputDirectory
-    lateinit var outDir: File
-
-    private lateinit var valuesToRestore: AnimationsScales
+    lateinit var communicator: DeviceCommunicator
+    lateinit var persistenceHelper: AnimationScalesPersistenceHelper
+    lateinit var animationScalesSwitch: AnimationScalesSwitch
 
     @TaskAction
     fun enableAnimations() {
+        val bridge = communicator.bridge
+        val outputReceiverProvider = communicator.outputReceiverProvider
+
         bridge.devicesCanBeFound()
 
-        val persistenceHelper = AnimationScalesPersistenceHelper(outDir, configFile)
-
-        if (!outDir.exists()) {
-            throw GradleException("Output directory cannot be found.")
-        }
-        if (!configFile.exists()) {
-            throw GradleException("Config file cannot be found.")
-        }
+        if (!persistenceHelper.hasOutputDir()) throw GradleException("Output directory cannot be found.")
+        if (!persistenceHelper.hasConfigFile()) throw GradleException("Config file cannot be found.")
 
         bridge.devices.forEach { device ->
-            val androidId = device.getAndroidId()
-            val currentDeviceValues = device.getAnimationValues()
-
-            when {
-                currentDeviceValues.hasNoZeros() && persistenceHelper.hasOneEntryForId(androidId)   -> {
-                    println("Animations are already enabled for ${device.details()}")
-                    device.printAnimationValues()
-                }
-                !currentDeviceValues.hasNoZeros() && persistenceHelper.hasOneEntryForId(androidId)  -> {
-                    valuesToRestore = persistenceHelper.getValuesForDevice(androidId)
-                    device.setAnimationValues(valuesToRestore)
-                    device.printAnimationValues()
-                }
-                currentDeviceValues.hasNoZeros() && !persistenceHelper.hasOneEntryForId(androidId)  -> {
-                    println("Animations are already enabled for ${device.details()}")
-                    device.printAnimationValues()
-                }
-                !currentDeviceValues.hasNoZeros() && !persistenceHelper.hasOneEntryForId(androidId) -> {
-                    valuesToRestore = AnimationsScales(1F, 1F, 1F)
-                    device.setAnimationValues(valuesToRestore)
-                    device.printAnimationValues()
-                }
-            }
+            val deviceWrapper = DeviceWrapper(device, outputReceiverProvider)
+            animationScalesSwitch.deviceWrapper = deviceWrapper
+            animationScalesSwitch.enableAnimations()
         }
 
-        configFile.delete()
-        outDir.delete()
+        persistenceHelper.deleteConfigFile()
+        persistenceHelper.deleteOutputDir()
     }
 }
