@@ -1,12 +1,11 @@
-package tasks
+package unitTest.tasks
 
 import internal.DeviceCommunicator
+import internal.ShellCommands.SETTINGS_PUT_STAY_ON
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.CollectingOutputReceiver
 import com.android.ddmlib.IDevice
-import com.nhaarman.mockito_kotlin.given
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.then
+import com.nhaarman.mockito_kotlin.*
 import internal.OutputReceiverProvider
 import org.gradle.api.GradleException
 import org.gradle.api.Project
@@ -16,9 +15,10 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.mockito.internal.verification.Times
+import tasks.DisableStayAwakeTask
 import java.io.File
 
-class CheckWifiTaskTest {
+class DisableStayAwakeTaskTest {
 
     @Rule
     @JvmField
@@ -31,13 +31,13 @@ class CheckWifiTaskTest {
 
     val deviceCommunicator = DeviceCommunicator(bridge, outputReceiverProvider)
     val noDevices = emptyArray<IDevice>()
-    val wifi = "wifi"
     val devices = arrayOf(device)
-    val mNetworkInfo = "mNetworkInfo [type: WIFI[], extra: \"$wifi\"]"
+    val deviceStaysNotAwake = "0"
+    val deviceStaysAwake = "2"
 
     lateinit var projectDir: File
     lateinit var project: Project
-    lateinit var task: CheckWifiTask
+    lateinit var task: DisableStayAwakeTask
 
     @Before
     fun setup() {
@@ -45,46 +45,46 @@ class CheckWifiTaskTest {
         projectDir.mkdirs()
 
         project = ProjectBuilder.builder().withProjectDir(projectDir).build()
-        task = project.tasks.create("CheckWifiTask", CheckWifiTask::class.java)
+        task = project.tasks.create("DisableStayAwakeTask", DisableStayAwakeTask::class.java)
 
         task.communicator = deviceCommunicator
-        task.wifi = wifi
 
         given(outputReceiverProvider.get()).willReturn(outputReceiver)
-    }
-
-    @Test(expected = GradleException::class)
-    fun `throw gradle exception when string in extension is empty`() {
-        task.wifi = ""
-        given(bridge.devices).willReturn(devices)
-
-        task.checkWifi()
-    }
-
-    @Test(expected = GradleException::class)
-    fun `throw gradle exception when string in extension is blank`() {
-        task.wifi = " "
-        given(bridge.devices).willReturn(devices)
-
-        task.checkWifi()
     }
 
     @Test(expected = GradleException::class)
     fun `throw gradle exception when no devices connected`() {
         given(bridge.devices).willReturn(noDevices)
 
-        task.checkWifi()
+        task.disableStayAwake()
     }
 
     @Test
-    fun `no gradle exception is thrown when connected to right wifi`() {
+    fun `only get device details when device is already not staying awake`() {
         given(bridge.devices).willReturn(devices)
-        given(outputReceiver.output).willReturn(mNetworkInfo)
+        given(outputReceiver.output).willReturn(deviceStaysNotAwake)
 
-        task.checkWifi()
+        task.disableStayAwake()
 
+        then(device).should(never()).executeShellCommand(eq("$SETTINGS_PUT_STAY_ON $deviceStaysNotAwake"), any())
+        deviceDetailsShown()
+    }
+
+    @Test
+    fun `set awake status and get device details when device is already not staying awake`() {
+        given(bridge.devices).willReturn(devices)
+        given(outputReceiver.output).willReturn(deviceStaysAwake)
+
+        task.disableStayAwake()
+
+        then(device).should(Times(1)).executeShellCommand(eq("$SETTINGS_PUT_STAY_ON $deviceStaysNotAwake"), any())
+        deviceDetailsShown()
+    }
+
+    private fun deviceDetailsShown() {
         then(device).should(Times(1)).getProperty("ro.product.model")
         then(device).should(Times(1)).getProperty("ro.build.version.release")
         then(device).should(Times(1)).getProperty("ro.build.version.sdk")
     }
+
 }

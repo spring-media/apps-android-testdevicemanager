@@ -1,4 +1,4 @@
-package tasks.internal
+package unitTest.tasks.internal
 
 import com.nhaarman.mockito_kotlin.*
 import internal.AnimationScalesPersistenceHelper
@@ -7,6 +7,7 @@ import internal.DeviceWrapper
 import org.junit.Before
 import org.junit.Test
 import org.mockito.internal.verification.Times
+import tasks.internal.AnimationScalesSwitch
 
 class AnimationScalesSwitchTest {
 

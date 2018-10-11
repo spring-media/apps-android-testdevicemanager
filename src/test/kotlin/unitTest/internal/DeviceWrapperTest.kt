@@ -1,4 +1,4 @@
-package internal
+package unitTest.internal
 
 import com.android.ddmlib.CollectingOutputReceiver
 import com.android.ddmlib.IDevice
@@ -6,6 +6,9 @@ import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.then
 import com.winterbe.expekt.should
+import internal.AnimationsScales
+import internal.DeviceWrapper
+import internal.OutputReceiverProvider
 import internal.StayAwakeStatus.*
 import org.gradle.api.GradleException
 import org.junit.Before
@@ -32,7 +35,7 @@ class DeviceWrapperTest{
     val settingsPutStayOn = "settings put global stay_on_while_plugged_in"
     val settingsGetAndroidId= "settings get secure android_id"
     val androidId = "androidId"
-    val animationsScales = AnimationsScales(1F,1F,1F)
+    val animationsScales = AnimationsScales(1F, 1F, 1F)
     val dumpsysInputMethod = "dumpsys input_method"
     val dumpSysWindow = "dumpsys window"
     val dumpSysWifi = "dumpsys wifi"
