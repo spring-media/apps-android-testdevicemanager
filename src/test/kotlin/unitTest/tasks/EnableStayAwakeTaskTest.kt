@@ -1,14 +1,10 @@
-package tasks
+package unitTest.tasks
 
 import internal.DeviceCommunicator
-import internal.ShellCommands.DUMPSYS_INPUT_METHOD
-import internal.ShellCommands.INPUT_PRESS_POWER_BUTTON
-import internal.ShellCommands.INPUT_SLEEP_CALL
-import TestDeviceManagerPlugin.Companion.LOCK_TASK_NAME
+import internal.ShellCommands.SETTINGS_PUT_STAY_ON
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.CollectingOutputReceiver
 import com.android.ddmlib.IDevice
-import com.android.sdklib.AndroidVersion
 import com.nhaarman.mockito_kotlin.*
 import internal.OutputReceiverProvider
 import org.gradle.api.GradleException
@@ -19,9 +15,10 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.mockito.internal.verification.Times
+import tasks.EnableStayAwakeTask
 import java.io.File
 
-class LockDeviceTaskTest {
+class EnableStayAwakeTaskTest {
 
     @Rule
     @JvmField
@@ -35,14 +32,12 @@ class LockDeviceTaskTest {
     val deviceCommunicator = DeviceCommunicator(bridge, outputReceiverProvider)
     val noDevices = emptyArray<IDevice>()
     val devices = arrayOf(device)
-    val displayOn = "mScreenOn=true"
-    val emptyString = ""
-    val apiLevel20 = AndroidVersion("20")
-    val apiLevel19 = AndroidVersion("19")
+    val deviceStaysNotAwake = "0"
+    val deviceStaysAwake = "2"
 
     lateinit var projectDir: File
     lateinit var project: Project
-    lateinit var task: LockDeviceTask
+    lateinit var task: EnableStayAwakeTask
 
     @Before
     fun setup() {
@@ -50,39 +45,45 @@ class LockDeviceTaskTest {
         projectDir.mkdirs()
 
         project = ProjectBuilder.builder().withProjectDir(projectDir).build()
-        task = project.tasks.create(LOCK_TASK_NAME, LockDeviceTask::class.java)
+        task = project.tasks.create("EnableStayAwakeTask", EnableStayAwakeTask::class.java)
+
         task.communicator = deviceCommunicator
 
-        given(bridge.devices).willReturn(devices)
         given(outputReceiverProvider.get()).willReturn(outputReceiver)
     }
 
     @Test(expected = GradleException::class)
     fun `throw gradle exception when no devices connected`() {
-
         given(bridge.devices).willReturn(noDevices)
 
-        task.lock()
+        task.enableStayAwake()
     }
 
     @Test
-    fun `display can be deactivated with sdk version equal twenty`() {
-        given(device.version).willReturn(apiLevel20)
-        given(outputReceiver.output).willReturn(emptyString)
+    fun `only get device details when device is already set to stay awake`() {
+        given(bridge.devices).willReturn(devices)
+        given(outputReceiver.output).willReturn(deviceStaysAwake)
 
-        task.lock()
+        task.enableStayAwake()
 
-        then(device).should().executeShellCommand(eq(INPUT_SLEEP_CALL), any())
+        then(device).should(never()).executeShellCommand(eq("$SETTINGS_PUT_STAY_ON $deviceStaysAwake"), any())
+        deviceDetailsShown()
     }
 
     @Test
-    fun `display can be deactivated with sdk version smaller than twenty`() {
-        given(device.version).willReturn(apiLevel19)
-        given(outputReceiver.output).willReturn(displayOn)
+    fun `set awake status and get device details when device is not set to awake`() {
+        given(bridge.devices).willReturn(devices)
+        given(outputReceiver.output).willReturn(deviceStaysNotAwake)
 
-        task.lock()
+        task.enableStayAwake()
 
-        then(device).should(Times(1)).executeShellCommand(eq(DUMPSYS_INPUT_METHOD), any())
-        then(device).should().executeShellCommand(eq(INPUT_PRESS_POWER_BUTTON), any())
+        then(device).should(Times(1)).executeShellCommand(eq("$SETTINGS_PUT_STAY_ON $deviceStaysAwake"), any())
+        deviceDetailsShown()
+    }
+
+    private fun deviceDetailsShown() {
+        then(device).should(Times(1)).getProperty("ro.product.model")
+        then(device).should(Times(1)).getProperty("ro.build.version.release")
+        then(device).should(Times(1)).getProperty("ro.build.version.sdk")
     }
 }

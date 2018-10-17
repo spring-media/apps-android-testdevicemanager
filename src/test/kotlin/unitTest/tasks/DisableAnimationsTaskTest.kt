@@ -1,4 +1,4 @@
-package tasks
+package unitTest.tasks
 
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.IDevice
@@ -16,6 +16,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.mockito.internal.verification.Times
+import tasks.DisableAnimationsTask
 import tasks.internal.AnimationScalesSwitch
 import java.io.File
 

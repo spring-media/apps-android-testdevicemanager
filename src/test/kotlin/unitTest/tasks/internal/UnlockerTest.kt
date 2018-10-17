@@ -1,4 +1,4 @@
-package tasks.internal
+package unitTest.tasks.internal
 
 import internal.DeviceWrapper
 import internal.ShellCommands.DUMPSYS_WINDOW
@@ -13,6 +13,7 @@ import org.gradle.api.GradleException
 import org.junit.Before
 import org.junit.Test
 import org.mockito.internal.verification.Times
+import tasks.internal.Unlocker
 
 class UnlockerTest {
 

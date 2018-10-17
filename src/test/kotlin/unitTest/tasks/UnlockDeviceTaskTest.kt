@@ -1,4 +1,4 @@
-package tasks
+package unitTest.tasks
 
 import internal.DeviceCommunicator
 import internal.ShellCommands.DUMPSYS_INPUT_METHOD
@@ -19,6 +19,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.mockito.internal.verification.Times
+import tasks.UnlockDeviceTask
 import java.io.File
 
 class UnlockDeviceTaskTest {
