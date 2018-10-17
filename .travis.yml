@@ -1,4 +1,4 @@
-language: java
+language: android
 jdk: oraclejdk8
 
 branches:
@@ -9,5 +9,5 @@ script:
 - ./gradlew check --stacktrace --info
 
 install:
-  echo yes | sdkmanager \"platform-tools\"
-  echo yes | sdkmanager \"platforms;android-26\"
+  echo yes | sdkmanager "platform-tools"
+  echo yes | sdkmanager "platforms;android-26"
