@@ -49,13 +49,13 @@ However, there might be device - OS version combinations that where not tested a
 # Usage 
 The following tasks will be added to the ```device setup``` section of the gradle tasks
 ```
-connectedAnimationsDisable
-connectedAnimationsEnable
-connectedCheckWifi
-connectedDeviceLock
-connectedDeviceUnlock
-connectedStayAwakeDisable
-connectedStayAwakeEnable
+-connectedAnimationsDisable
+-connectedAnimationsEnable
+-connectedCheckWifi
+-connectedDeviceLock
+-connectedDeviceUnlock
+-connectedStayAwakeDisable
+-connectedStayAwakeEnable
 ```
 Run these tasks before you run your espresso tests and setup your test devices.
 
