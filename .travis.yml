@@ -6,4 +6,4 @@ branches:
   - master
   
 script:
-- ./gradlew check --stacktrace
+- ./gradlew check --stacktrace --info
