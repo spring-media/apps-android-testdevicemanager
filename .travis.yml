@@ -4,12 +4,7 @@ sudo: true
 
 android:
   components:
-  - tools # to update the repository XML files
-  - tools # to update the SDK tools themselves
-
-  - platform-tools
   - build-tools-28.0.3
-  - android-26
 
 jdk: oraclejdk8
 
