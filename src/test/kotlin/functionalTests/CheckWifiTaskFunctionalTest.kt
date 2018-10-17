@@ -20,8 +20,6 @@ class CheckWifiTaskFunctionalTest : BaseTest("connectedCheckWifi", "checkWifi.gr
                 .withArguments("connectedCheckWifi")
                 .buildAndFail()
 
-        println("output: ${result.output}")
-
         result.output.should.contain(exceptionMessage)
     }
 }
