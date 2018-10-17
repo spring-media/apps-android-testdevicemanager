@@ -2,4 +2,4 @@ package functionalTests
 
 import BaseTest
 
-class UnlockDeviceTasFunctionalTest : BaseTest("connectedDeviceUnlock")
+class UnlockDeviceTaskFunctionalTest : BaseTest("connectedDeviceUnlock")
