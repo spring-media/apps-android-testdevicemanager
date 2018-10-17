@@ -4,6 +4,6 @@ jdk: oraclejdk8
 branches:
   only:
   - master
-  
+
 script:
-- ./gradlew check --stacktrace
+- ./gradlew check --stacktrace --debug
