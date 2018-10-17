@@ -1,12 +1,11 @@
 package tasks
 
-import internal.DeviceCommunicator
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.CollectingOutputReceiver
 import com.android.ddmlib.IDevice
 import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.then
+import internal.DeviceCommunicator
 import internal.OutputReceiverProvider
 import org.gradle.api.GradleException
 import org.gradle.api.Project
@@ -15,10 +14,11 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import org.mockito.internal.verification.Times
+import tasks.internal.BaseTest
+import tasks.internal.DefaultPluginTask
 import java.io.File
 
-class CheckWifiTaskTest {
+class CheckWifiTaskTest : BaseTest() {
 
     @Rule
     @JvmField
@@ -28,6 +28,7 @@ class CheckWifiTaskTest {
     val bridge: AndroidDebugBridge = mock()
     val outputReceiver: CollectingOutputReceiver = mock()
     val outputReceiverProvider: OutputReceiverProvider = mock()
+    val defaultPluginTask: DefaultPluginTask = mock()
 
     val deviceCommunicator = DeviceCommunicator(bridge, outputReceiverProvider)
     val noDevices = emptyArray<IDevice>()
@@ -58,7 +59,7 @@ class CheckWifiTaskTest {
         task.wifi = ""
         given(bridge.devices).willReturn(devices)
 
-        task.checkWifi()
+        task.runTask1()
     }
 
     @Test(expected = GradleException::class)
@@ -66,14 +67,7 @@ class CheckWifiTaskTest {
         task.wifi = " "
         given(bridge.devices).willReturn(devices)
 
-        task.checkWifi()
-    }
-
-    @Test(expected = GradleException::class)
-    fun `throw gradle exception when no devices connected`() {
-        given(bridge.devices).willReturn(noDevices)
-
-        task.checkWifi()
+        task.runTask1()
     }
 
     @Test
@@ -81,10 +75,8 @@ class CheckWifiTaskTest {
         given(bridge.devices).willReturn(devices)
         given(outputReceiver.output).willReturn(mNetworkInfo)
 
-        task.checkWifi()
+        task.runTaskFor(device)
 
-        then(device).should(Times(1)).getProperty("ro.product.model")
-        then(device).should(Times(1)).getProperty("ro.build.version.release")
-        then(device).should(Times(1)).getProperty("ro.build.version.sdk")
+        thenDeviceShouldGetDetails(device)
     }
 }

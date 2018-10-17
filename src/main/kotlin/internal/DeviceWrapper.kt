@@ -1,6 +1,7 @@
 package internal
 
 import com.android.ddmlib.IDevice
+import internal.GradleException.noDevicesConnected
 import internal.ShellCommands.DUMPSYS_INPUT_METHOD
 import internal.ShellCommands.DUMPSYS_WIFI
 import internal.ShellCommands.DUMPSYS_WINDOW
@@ -9,6 +10,7 @@ import internal.ShellCommands.SETTINGS_GET_GLOBAL
 import internal.ShellCommands.SETTINGS_GET_STAY_ON
 import internal.ShellCommands.SETTINGS_PUT_GLOBAL
 import internal.ShellCommands.SETTINGS_PUT_STAY_ON
+import internal.ShellOutput.noDeviceError
 import org.gradle.api.GradleException
 import java.util.regex.Matcher
 
@@ -29,7 +31,7 @@ class DeviceWrapper(val device: IDevice, val outputReceiverProvider: OutputRecei
         val output = analyzeOutputOfShellCommandByRegex(DUMPSYS_WINDOW, "mUnrestrictedScreen.*?(\\d+)x(\\d+)")
         val screenWidth = output.group(1).trim().toInt()
         val screenHeight = output.group(2).trim().toInt()
-        return ScreenResolution(xCoordinate = screenWidth, yCoordinate = screenHeight)
+        return ScreenResolution(xValue = screenWidth, yValue = screenHeight)
     }
 
     fun isDeviceUnlocked(): Boolean {
@@ -59,31 +61,34 @@ class DeviceWrapper(val device: IDevice, val outputReceiverProvider: OutputRecei
         return output.trim()
     }
 
-    fun getAnimationValues(): AnimationsScales {
-        return AnimationsScales(
-                windowAnimation = getAnimationValue(animationScalesNames[0]),
-                transitionAnimation = getAnimationValue(animationScalesNames[1]),
-                animatorDuration = getAnimationValue(animationScalesNames[2])
-        )
+    fun getAnimationValues(): HashMap<String, Float> {
+        animationScales.forEach {
+            animationScales[it.key] = getAnimationValue(it.key)
+        }
+        return animationScales
     }
 
-    fun setAnimationValues(scales: AnimationsScales) {
-        setAnimationValue(animationScalesNames[0], scales.windowAnimation)
-        setAnimationValue(animationScalesNames[1], scales.transitionAnimation)
-        setAnimationValue(animationScalesNames[2], scales.animatorDuration)
+    fun setAnimationValues(scales: HashMap<String, Float>) {
+        scales.forEach {
+            setAnimationValue(it.key, it.value)
+        }
     }
 
     fun printAnimationValues() {
-        printAnimationValue(animationScalesNames[0])
-        printAnimationValue(animationScalesNames[1])
-        printAnimationValue(animationScalesNames[2])
+        animationScales.forEach {
+            printAnimationValue(it.key)
+        }
         println("\n")
     }
 
     fun executeShellCommandWithOutput(shellCommand: String): String {
         val outputReceiver = outputReceiverProvider.get()
         device.executeShellCommand(shellCommand, outputReceiver)
-        return outputReceiver.output
+        val output = outputReceiver.output
+        if (output.contains(noDeviceError)) {
+            throw GradleException(noDevicesConnected)
+        }
+        return output
     }
 
     private fun analyzeOutputOfShellCommandByRegex(shellCommand: String, regex: String): Matcher {
@@ -92,7 +97,7 @@ class DeviceWrapper(val device: IDevice, val outputReceiverProvider: OutputRecei
     }
 
     private fun setAnimationValue(animation: String, value: Float) {
-        executeShellCommandWithOutput("$SETTINGS_PUT_GLOBAL ${animation}_scale $value")
+        executeShellCommandWithOutput("$SETTINGS_PUT_GLOBAL $animation $value")
     }
 
     private fun printAnimationValue(animation: String) {
@@ -101,7 +106,7 @@ class DeviceWrapper(val device: IDevice, val outputReceiverProvider: OutputRecei
     }
 
     private fun getAnimationValue(animation: String): Float {
-        val output = executeShellCommandWithOutput("$SETTINGS_GET_GLOBAL ${animation}_scale")
+        val output = executeShellCommandWithOutput("$SETTINGS_GET_GLOBAL $animation")
         return output.trim().toFloat()
     }
 }

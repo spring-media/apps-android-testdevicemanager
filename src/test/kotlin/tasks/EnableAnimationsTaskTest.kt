@@ -33,7 +33,6 @@ class EnableAnimationsTaskTest {
     val animationsScalesSwitch: AnimationScalesSwitch = mock()
 
     val deviceCommunicator = DeviceCommunicator(bridge, outputReceiverProvider)
-    val noDevices = emptyArray<IDevice>()
     val devices = arrayOf(device)
 
     lateinit var projectDir: File
@@ -58,29 +57,22 @@ class EnableAnimationsTaskTest {
     }
 
     @Test(expected = GradleException::class)
-    fun `throw gradle exception when no devices connected`() {
-        given(bridge.devices).willReturn(noDevices)
-
-        task.enableAnimations()
-    }
-
-    @Test(expected = GradleException::class)
     fun `gradle exception is thrown when outDir does not exist`() {
         given(persistenceHelper.hasOutputDir()).willReturn(false)
 
-        task.enableAnimations()
+        task.runTask2()
     }
 
     @Test(expected = GradleException::class)
     fun `gradle exception is thrown when config file does not exist`() {
         given(persistenceHelper.hasConfigFile()).willReturn(false)
 
-        task.enableAnimations()
+        task.runTask2()
     }
 
     @Test
     fun `can check for persistence`() {
-        task.enableAnimations()
+        task.runTask2()
 
         then(persistenceHelper).should().hasOutputDir()
         then(persistenceHelper).should().hasConfigFile()
@@ -88,21 +80,21 @@ class EnableAnimationsTaskTest {
 
     @Test
     fun `can enable animations via animationsScaleSwitch`() {
-        task.enableAnimations()
+        task.runTaskFor(device)
 
         then(animationsScalesSwitch).should().enableAnimations()
     }
 
     @Test
     fun `can delete config file`() {
-        task.enableAnimations()
+        task.runPostTask()
 
         then(persistenceHelper).should(Times(1)).deleteConfigFile()
     }
 
     @Test
     fun `can delete output directory`() {
-        task.enableAnimations()
+        task.runPostTask()
 
         then(persistenceHelper).should(Times(1)).deleteOutputDir()
     }

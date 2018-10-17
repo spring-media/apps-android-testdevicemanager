@@ -2,8 +2,8 @@ package tasks.internal
 
 import com.nhaarman.mockito_kotlin.*
 import internal.AnimationScalesPersistenceHelper
-import internal.AnimationsScales
 import internal.DeviceWrapper
+import internal.createAnimationsScalesWithValue
 import org.junit.Before
 import org.junit.Test
 import org.mockito.internal.verification.Times
@@ -16,9 +16,9 @@ class AnimationScalesSwitchTest {
     private val classToTest = AnimationScalesSwitch(persistenceHelper)
 
     private val androidId = "androidId"
-    private val animationValues0 = AnimationsScales(0F, 0F, 0F)
-    private val animationValues1 = AnimationsScales(1F, 1F, 1F)
-    private val animationValues2 = AnimationsScales(2F, 2F, 2F)
+    private val animationValues0 = createAnimationsScalesWithValue(0F)
+    private val animationValues1 = createAnimationsScalesWithValue(1F)
+    private val animationValues2 = createAnimationsScalesWithValue(2F)
 
     @Before
     fun setup() {

@@ -8,7 +8,6 @@ import com.nhaarman.mockito_kotlin.then
 import internal.AnimationScalesPersistenceHelper
 import internal.DeviceCommunicator
 import internal.OutputReceiverProvider
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
@@ -20,7 +19,7 @@ import tasks.internal.AnimationScalesSwitch
 import java.io.File
 
 
-class DisableAnimationsTaskTest {
+class DisableAndPersistAnimationsTaskTest {
 
     @Rule
     @JvmField
@@ -33,12 +32,11 @@ class DisableAnimationsTaskTest {
     private val animationScalesSwitch: AnimationScalesSwitch = mock()
 
     private val deviceCommunicator = DeviceCommunicator(bridge, outputReceiverProvider)
-    private val noDevices = emptyArray<IDevice>()
     private val devices = arrayOf(device)
 
     lateinit var projectDir: File
     lateinit var project: Project
-    lateinit var task: DisableAnimationsTask
+    lateinit var task: DisableAndPersistAnimationsTask
 
     @Before
     fun setup() {
@@ -46,7 +44,7 @@ class DisableAnimationsTaskTest {
         projectDir.mkdirs()
 
         project = ProjectBuilder.builder().withProjectDir(projectDir).build()
-        task = project.tasks.create("DisableAnimationsTask", DisableAnimationsTask::class.java)
+        task = project.tasks.create("DisableAnimationsTask", DisableAndPersistAnimationsTask::class.java)
 
         task.communicator = deviceCommunicator
         task.persistenceHelper = persistenceHelper
@@ -57,17 +55,10 @@ class DisableAnimationsTaskTest {
         given(persistenceHelper.hasConfigFile()).willReturn(true)
     }
 
-    @Test(expected = GradleException::class)
-    fun `throw gradle exception when no devices connected`() {
-        given(bridge.devices).willReturn(noDevices)
-
-        task.disableAnimations()
-    }
-
     @Test
     fun `can check persistence`() {
 
-        task.disableAnimations()
+        task.runTask2()
 
         then(persistenceHelper).should().hasOutputDir()
         then(persistenceHelper).should().hasConfigFile()
@@ -77,7 +68,7 @@ class DisableAnimationsTaskTest {
     fun `output directory can be created`() {
         given(persistenceHelper.hasOutputDir()).willReturn(false)
 
-        task.disableAnimations()
+        task.runTask2()
 
         then(persistenceHelper).should(Times(1)).createOutputDirectory()
     }
@@ -86,14 +77,14 @@ class DisableAnimationsTaskTest {
     fun `config file can be created`() {
         given(persistenceHelper.hasConfigFile()).willReturn(false)
 
-        task.disableAnimations()
+        task.runTask2()
 
         then(persistenceHelper).should(Times(1)).createConfigFile()
     }
 
     @Test
     fun `animations can be disabled by animationScalesSwitch`() {
-        task.disableAnimations()
+        task.runTaskFor(device)
 
         then(animationScalesSwitch).should().disableAnimations()
     }

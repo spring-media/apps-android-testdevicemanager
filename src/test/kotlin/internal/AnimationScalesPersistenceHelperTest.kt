@@ -17,16 +17,18 @@ class AnimationScalesPersistenceHelperTest {
 
     private val outDir: File = mock()
     private val configFile: File = mock()
+    private val dataParser: DataParser = mock()
 
     private val androidId = "androidId"
     private val androidId2 = "androidId2"
     private val configFileString = "androidId 1.0 1.0 1.0"
-    private val configFileString2 = "androidId2 1.0 1.0 1.0  \n"
-    private val animationsScales = AnimationsScales(1F, 1F, 1F)
+    private val configFileString2 = "androidId2 1.0 1.0 1.0"
+    private val animationsScales = createAnimationsScalesWithValue(1F)
 
     private val classToTest = AnimationScalesPersistenceHelper(
             outDir,
-            configFile
+            configFile,
+            dataParser
     )
 
     @Test
@@ -44,20 +46,16 @@ class AnimationScalesPersistenceHelperTest {
     }
 
     @Test
-    fun `can get values from file for device`() {
-        val persistence = createPersistence()
+    fun `can get values from dataParser`() {
+        val classToTest = createPersistenceHelperWithRealFiles()
+        classToTest.getValuesForDevice(androidId)
 
-        val classToTest = AnimationScalesPersistenceHelper(persistence.first, persistence.second)
-        val result = classToTest.getValuesForDevice(androidId)
-
-        result.should.equal(animationsScales)
+        then(dataParser).should().getAnimationScalesFrom(configFileString)
     }
 
     @Test
     fun `check if file has one entry for id can be true`() {
-        val persistence = createPersistence()
-
-        val classToTest = AnimationScalesPersistenceHelper(persistence.first, persistence.second)
+        val classToTest = createPersistenceHelperWithRealFiles()
         val result = classToTest.hasOneEntryForId(androidId)
 
         result.should.be.equal(true)
@@ -65,9 +63,7 @@ class AnimationScalesPersistenceHelperTest {
 
     @Test
     fun `check if file has one entry for id can be false`() {
-        val persistence = createPersistence()
-
-        val classToTest = AnimationScalesPersistenceHelper(persistence.first, persistence.second)
+        val classToTest = createPersistenceHelperWithRealFiles()
         val result = classToTest.hasOneEntryForId(androidId2)
 
         result.should.be.equal(false)
@@ -75,21 +71,17 @@ class AnimationScalesPersistenceHelperTest {
 
     @Test
     fun `text can be append to config file`() {
-        val realOutputDirectory = temporaryFolder.newFolder("outDir")
-        val realConfigFile = temporaryFolder.newFile("configFile.txt")
-
-        val classToTest = AnimationScalesPersistenceHelper(realOutputDirectory, realConfigFile)
+        val classToTest = createPersistenceHelperWithRealFiles()
         val file = classToTest.appendTextToConfigFileForId(androidId2, animationsScales)
         val result = file.readText()
 
-        result.should.equal(configFileString2)
+        result.should.contain(configFileString2)
     }
 
     @Test
     fun `entry of config file can be deleted`() {
-        val persistence = createPersistence()
+        val classToTest = createPersistenceHelperWithRealFiles()
 
-        val classToTest = AnimationScalesPersistenceHelper(persistence.first, persistence.second)
         val file = classToTest.deleteEntryForId(androidId)
         val result = file.readText()
 
@@ -124,6 +116,10 @@ class AnimationScalesPersistenceHelperTest {
         then(configFile).should(Times(1)).delete()
     }
 
+    private fun createPersistenceHelperWithRealFiles(): AnimationScalesPersistenceHelper {
+        val persistence = createPersistence()
+        return AnimationScalesPersistenceHelper(persistence.first, persistence.second, dataParser)
+    }
 
     private fun createPersistence(): Pair<File, File> {
         val realOutputDirectory = temporaryFolder.newFolder("outDir")

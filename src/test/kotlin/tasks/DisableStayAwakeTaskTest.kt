@@ -1,13 +1,12 @@
 package tasks
 
-import internal.DeviceCommunicator
-import internal.ShellCommands.SETTINGS_PUT_STAY_ON
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.CollectingOutputReceiver
 import com.android.ddmlib.IDevice
 import com.nhaarman.mockito_kotlin.*
+import internal.DeviceCommunicator
 import internal.OutputReceiverProvider
-import org.gradle.api.GradleException
+import internal.ShellCommands.SETTINGS_PUT_STAY_ON
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
@@ -29,7 +28,6 @@ class DisableStayAwakeTaskTest {
     val outputReceiverProvider: OutputReceiverProvider = mock()
 
     val deviceCommunicator = DeviceCommunicator(bridge, outputReceiverProvider)
-    val noDevices = emptyArray<IDevice>()
     val devices = arrayOf(device)
     val deviceStaysNotAwake = "0"
     val deviceStaysAwake = "2"
@@ -51,19 +49,12 @@ class DisableStayAwakeTaskTest {
         given(outputReceiverProvider.get()).willReturn(outputReceiver)
     }
 
-    @Test(expected = GradleException::class)
-    fun `throw gradle exception when no devices connected`() {
-        given(bridge.devices).willReturn(noDevices)
-
-        task.disableStayAwake()
-    }
-
     @Test
     fun `only get device details when device is already not staying awake`() {
         given(bridge.devices).willReturn(devices)
         given(outputReceiver.output).willReturn(deviceStaysNotAwake)
 
-        task.disableStayAwake()
+        task.runTaskFor(device)
 
         then(device).should(never()).executeShellCommand(eq("$SETTINGS_PUT_STAY_ON $deviceStaysNotAwake"), any())
         deviceDetailsShown()
@@ -74,7 +65,7 @@ class DisableStayAwakeTaskTest {
         given(bridge.devices).willReturn(devices)
         given(outputReceiver.output).willReturn(deviceStaysAwake)
 
-        task.disableStayAwake()
+        task.runTaskFor(device)
 
         then(device).should(Times(1)).executeShellCommand(eq("$SETTINGS_PUT_STAY_ON $deviceStaysNotAwake"), any())
         deviceDetailsShown()

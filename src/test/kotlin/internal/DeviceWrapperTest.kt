@@ -6,13 +6,14 @@ import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.then
 import com.winterbe.expekt.should
-import internal.StayAwakeStatus.*
+import internal.StayAwakeStatus.STAY_AWAKE
+import internal.StayAwakeStatus.STAY_NOT_AWAKE
 import org.gradle.api.GradleException
 import org.junit.Before
 import org.junit.Test
 import org.mockito.internal.verification.Times
 
-class DeviceWrapperTest{
+class DeviceWrapperTest {
 
     val device: IDevice = mock()
     val outputReceiverProvider: OutputReceiverProvider = mock()
@@ -30,9 +31,9 @@ class DeviceWrapperTest{
     val stayNotAwake = "0"
     val settingsGetStayOn = "settings get global stay_on_while_plugged_in"
     val settingsPutStayOn = "settings put global stay_on_while_plugged_in"
-    val settingsGetAndroidId= "settings get secure android_id"
+    val settingsGetAndroidId = "settings get secure android_id"
     val androidId = "androidId"
-    val animationsScales = AnimationsScales(1F,1F,1F)
+    val animationsScales = createAnimationsScalesWithValue(1F)
     val dumpsysInputMethod = "dumpsys input_method"
     val dumpSysWindow = "dumpsys window"
     val dumpSysWifi = "dumpsys wifi"
@@ -81,8 +82,8 @@ class DeviceWrapperTest{
         val result = classToTest.getDeviceScreenResolution()
 
         deviceShouldExecuteShellCommand(dumpSysWindow, 1)
-        result.xCoordinate.should.equal(1080)
-        result.yCoordinate.should.equal(1920)
+        result.xValue.should.equal(1080)
+        result.yValue.should.equal(1920)
     }
 
 
@@ -174,7 +175,8 @@ class DeviceWrapperTest{
         val result = classToTest.getAnimationValues()
 
         then(device).should(Times(1)).executeShellCommand("settings get global window_animation_scale", outputReceiver)
-        then(device).should(Times(1)).executeShellCommand("settings get global transition_animation_scale", outputReceiver)
+        then(device).should(Times(1)).executeShellCommand("settings get global transition_animation_scale",
+                                                          outputReceiver)
         then(device).should(Times(1)).executeShellCommand("settings get global animator_duration_scale", outputReceiver)
         result.should.equal(animationsScales)
     }
@@ -185,9 +187,12 @@ class DeviceWrapperTest{
 
         classToTest.setAnimationValues(animationsScales)
 
-        then(device).should(Times(1)).executeShellCommand("settings put global window_animation_scale 1.0", outputReceiver)
-        then(device).should(Times(1)).executeShellCommand("settings put global transition_animation_scale 1.0", outputReceiver)
-        then(device).should(Times(1)).executeShellCommand("settings put global animator_duration_scale 1.0", outputReceiver)
+        then(device).should(Times(1)).executeShellCommand("settings put global window_animation_scale 1.0",
+                                                          outputReceiver)
+        then(device).should(Times(1)).executeShellCommand("settings put global transition_animation_scale 1.0",
+                                                          outputReceiver)
+        then(device).should(Times(1)).executeShellCommand("settings put global animator_duration_scale 1.0",
+                                                          outputReceiver)
     }
 
     @Test
@@ -197,7 +202,8 @@ class DeviceWrapperTest{
         classToTest.printAnimationValues()
 
         then(device).should(Times(1)).executeShellCommand("settings get global window_animation_scale", outputReceiver)
-        then(device).should(Times(1)).executeShellCommand("settings get global transition_animation_scale", outputReceiver)
+        then(device).should(Times(1)).executeShellCommand("settings get global transition_animation_scale",
+                                                          outputReceiver)
         then(device).should(Times(1)).executeShellCommand("settings get global animator_duration_scale", outputReceiver)
         deviceShouldGetDetails(3)
     }
@@ -216,7 +222,7 @@ class DeviceWrapperTest{
         then(device).should(Times(times)).executeShellCommand(command, outputReceiver)
     }
 
-    private fun deviceShouldGetDetails(times: Int){
+    private fun deviceShouldGetDetails(times: Int) {
         then(device).should(Times(times)).getProperty("ro.product.model")
         then(device).should(Times(times)).getProperty("ro.build.version.release")
         then(device).should(Times(times)).getProperty("ro.build.version.sdk")

@@ -1,17 +1,16 @@
 package tasks
 
-import internal.DeviceCommunicator
-import internal.ShellCommands.DUMPSYS_INPUT_METHOD
-import internal.ShellCommands.INPUT_PRESS_POWER_BUTTON
-import internal.ShellCommands.INPUT_WAKE_UP_CALL
-import TestDeviceManagerPlugin.Companion.UNLOCK_TASK_NAME
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.CollectingOutputReceiver
 import com.android.ddmlib.IDevice
 import com.android.sdklib.AndroidVersion
 import com.nhaarman.mockito_kotlin.*
+import internal.DeviceCommunicator
 import internal.OutputReceiverProvider
-import org.gradle.api.GradleException
+import internal.ShellCommands.DUMPSYS_INPUT_METHOD
+import internal.ShellCommands.INPUT_PRESS_POWER_BUTTON
+import internal.ShellCommands.INPUT_WAKE_UP_CALL
+import internal.TaskNames.UNLOCK_TASK_NAME
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
@@ -19,9 +18,10 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.mockito.internal.verification.Times
+import tasks.internal.BaseTest
 import java.io.File
 
-class UnlockDeviceTaskTest {
+class UnlockDeviceTaskTest : BaseTest() {
 
     @Rule
     @JvmField
@@ -33,7 +33,6 @@ class UnlockDeviceTaskTest {
     val outputReceiverProvider: OutputReceiverProvider = mock()
 
     val deviceCommunicator = DeviceCommunicator(bridge, outputReceiverProvider)
-    val noDevices = emptyArray<IDevice>()
     val devices = arrayOf(device)
     val unlockMethod = "power button"
     val password = "test"
@@ -63,22 +62,16 @@ class UnlockDeviceTaskTest {
         given(outputReceiverProvider.get()).willReturn(outputReceiver)
     }
 
-    @Test(expected = GradleException::class)
-    fun `throw gradle exception when no devices connected`() {
-        given(bridge.devices).willReturn(noDevices)
-
-        task.unlock()
-    }
-
     @Test
     fun `display can be activated by power button press for api level smaller twenty when display is off`() {
         given(device.version).willReturn(apiLevel19)
         given(outputReceiver.output).willReturn(emptyString)
 
-        task.unlock()
+        task.runTaskFor(device)
 
-        then(device).should(Times(1)).executeShellCommand(eq(DUMPSYS_INPUT_METHOD), any())
+        then(device).should(Times(2)).executeShellCommand(eq(DUMPSYS_INPUT_METHOD), any())
         then(device).should(Times(1)).executeShellCommand(eq(INPUT_PRESS_POWER_BUTTON), any())
+        thenDeviceShouldGetDetails(device)
     }
 
     @Test
@@ -86,10 +79,11 @@ class UnlockDeviceTaskTest {
         given(device.version).willReturn(apiLevel19)
         given(outputReceiver.output).willReturn(displayOn)
 
-        task.unlock()
+        task.runTaskFor(device)
 
         then(device).should(Times(1)).executeShellCommand(eq(DUMPSYS_INPUT_METHOD), any())
         then(device).should(never()).executeShellCommand(eq(INPUT_PRESS_POWER_BUTTON), any())
+        thenDeviceShouldGetDetails(device)
     }
 
     @Test
@@ -97,8 +91,9 @@ class UnlockDeviceTaskTest {
         given(device.version).willReturn(apiLevel20)
         given(outputReceiver.output).willReturn(emptyString)
 
-        task.unlock()
+        task.runTaskFor(device)
 
         then(device).should().executeShellCommand(eq(INPUT_WAKE_UP_CALL), any())
+        thenDeviceShouldGetDetails(device)
     }
 }
