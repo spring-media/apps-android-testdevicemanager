@@ -7,3 +7,7 @@ branches:
   
 script:
 - ./gradlew check --stacktrace --info
+
+install:
+  echo yes | sdkmanager \"platform-tools\"
+  echo yes | sdkmanager \"platforms;android-26\"
