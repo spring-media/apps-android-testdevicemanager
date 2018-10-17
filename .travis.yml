@@ -15,4 +15,4 @@ branches:
   - master
   
 script:
-- ./gradlew check --stacktrace --debug
+- ./gradlew check --stacktrace --info
