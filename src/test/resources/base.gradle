@@ -1,0 +1,7 @@
+android {
+    defaultConfig {
+        applicationId 'de.welt.apps.testdevicemanager'
+    }
+    buildToolsVersion '25.0.2'
+    compileSdkVersion 25
+}

@@ -1,7 +1,8 @@
-package internal
+package unitTest.internal
 
 import com.android.ddmlib.CollectingOutputReceiver
 import com.winterbe.expekt.should
+import internal.OutputReceiverProvider
 import org.junit.Test
 
 class OutputReceiverProviderTest {

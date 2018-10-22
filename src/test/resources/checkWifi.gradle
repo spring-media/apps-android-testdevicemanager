@@ -1,0 +1,10 @@
+plugins {
+    id 'de.welt.apps.testdevicemanager'
+    id 'com.android.application'
+}
+
+apply from: 'base.gradle'
+
+testDeviceManager {
+    wifi = "wifi"
+}
