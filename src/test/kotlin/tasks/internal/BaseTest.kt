@@ -6,9 +6,9 @@ import org.mockito.internal.verification.Times
 
 open class BaseTest {
 
-    fun thenDeviceShouldGetDetails(device: IDevice) {
-        then(device).should(Times(1)).getProperty("ro.product.model")
-        then(device).should(Times(1)).getProperty("ro.build.version.release")
-        then(device).should(Times(1)).getProperty("ro.build.version.sdk")
+    fun thenDeviceShouldGetDetails(device: IDevice, times: Int = 1) {
+        then(device).should(Times(times)).getProperty("ro.product.model")
+        then(device).should(Times(times)).getProperty("ro.build.version.release")
+        then(device).should(Times(times)).getProperty("ro.build.version.sdk")
     }
 }

@@ -12,8 +12,9 @@ import org.gradle.api.GradleException
 import org.junit.Before
 import org.junit.Test
 import org.mockito.internal.verification.Times
+import tasks.internal.BaseTest
 
-class DeviceWrapperTest {
+class DeviceWrapperTest : BaseTest() {
 
     val device: IDevice = mock()
     val outputReceiverProvider: OutputReceiverProvider = mock()
@@ -32,6 +33,12 @@ class DeviceWrapperTest {
     val settingsGetStayOn = "settings get global stay_on_while_plugged_in"
     val settingsPutStayOn = "settings put global stay_on_while_plugged_in"
     val settingsGetAndroidId = "settings get secure android_id"
+    val settingsGetWindowAnimationScale = "settings get global window_animation_scale"
+    val settingsGetTransitionAnimationScale = "settings get global transition_animation_scale"
+    val settingsGetAnimatorDurationScale = "settings get global animator_duration_scale"
+    val settingsPutWindowAnimationScale = "settings put global window_animation_scale 1.0"
+    val settingsPutTransitionAnimationScale = "settings put global transition_animation_scale 1.0"
+    val settingsPutAnimatorDurationScale = "settings put global animator_duration_scale 1.0"
     val androidId = "androidId"
     val animationsScales = createAnimationsScalesWithValue(1F)
     val dumpsysInputMethod = "dumpsys input_method"
@@ -72,7 +79,7 @@ class DeviceWrapperTest {
     fun `can get details`() {
         classToTest.getDetails()
 
-        deviceShouldGetDetails(1)
+        thenDeviceShouldGetDetails(device)
     }
 
     @Test
@@ -174,10 +181,7 @@ class DeviceWrapperTest {
 
         val result = classToTest.getAnimationValues()
 
-        then(device).should(Times(1)).executeShellCommand("settings get global window_animation_scale", outputReceiver)
-        then(device).should(Times(1)).executeShellCommand("settings get global transition_animation_scale",
-                                                          outputReceiver)
-        then(device).should(Times(1)).executeShellCommand("settings get global animator_duration_scale", outputReceiver)
+        thenAnimationScalesShouldBeGathered()
         result.should.equal(animationsScales)
     }
 
@@ -187,12 +191,9 @@ class DeviceWrapperTest {
 
         classToTest.setAnimationValues(animationsScales)
 
-        then(device).should(Times(1)).executeShellCommand("settings put global window_animation_scale 1.0",
-                                                          outputReceiver)
-        then(device).should(Times(1)).executeShellCommand("settings put global transition_animation_scale 1.0",
-                                                          outputReceiver)
-        then(device).should(Times(1)).executeShellCommand("settings put global animator_duration_scale 1.0",
-                                                          outputReceiver)
+        deviceShouldExecuteShellCommand(settingsPutWindowAnimationScale)
+        deviceShouldExecuteShellCommand(settingsPutTransitionAnimationScale)
+        deviceShouldExecuteShellCommand(settingsPutAnimatorDurationScale)
     }
 
     @Test
@@ -201,11 +202,8 @@ class DeviceWrapperTest {
 
         classToTest.printAnimationValues()
 
-        then(device).should(Times(1)).executeShellCommand("settings get global window_animation_scale", outputReceiver)
-        then(device).should(Times(1)).executeShellCommand("settings get global transition_animation_scale",
-                                                          outputReceiver)
-        then(device).should(Times(1)).executeShellCommand("settings get global animator_duration_scale", outputReceiver)
-        deviceShouldGetDetails(3)
+        thenAnimationScalesShouldBeGathered()
+        thenDeviceShouldGetDetails(device,  3)
     }
 
     @Test
@@ -214,17 +212,17 @@ class DeviceWrapperTest {
 
         val result = classToTest.executeShellCommandWithOutput(settingsPutStayOn)
 
-        then(device).should(Times(1)).executeShellCommand(settingsPutStayOn, outputReceiver)
+        then(device).should().executeShellCommand(settingsPutStayOn, outputReceiver)
         result.should.equal(stayAwake)
     }
 
-    private fun deviceShouldExecuteShellCommand(command: String, times: Int) {
-        then(device).should(Times(times)).executeShellCommand(command, outputReceiver)
+    private fun thenAnimationScalesShouldBeGathered(){
+        deviceShouldExecuteShellCommand(settingsGetWindowAnimationScale)
+        deviceShouldExecuteShellCommand(settingsGetTransitionAnimationScale)
+        deviceShouldExecuteShellCommand(settingsGetAnimatorDurationScale)
     }
 
-    private fun deviceShouldGetDetails(times: Int) {
-        then(device).should(Times(times)).getProperty("ro.product.model")
-        then(device).should(Times(times)).getProperty("ro.build.version.release")
-        then(device).should(Times(times)).getProperty("ro.build.version.sdk")
+    private fun deviceShouldExecuteShellCommand(command: String, times: Int = 1) {
+        then(device).should(Times(times)).executeShellCommand(command, outputReceiver)
     }
 }

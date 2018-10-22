@@ -6,7 +6,6 @@ import com.winterbe.expekt.should
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import org.mockito.internal.verification.Times
 import java.io.File
 
 class AnimationScalesPersistenceHelperTest {
@@ -35,14 +34,14 @@ class AnimationScalesPersistenceHelperTest {
     fun `can create output directory`() {
         classToTest.createOutputDirectory()
 
-        then(outDir).should(Times(1)).mkdir()
+        then(outDir).should().mkdir()
     }
 
     @Test
     fun `can create config file`() {
         classToTest.createConfigFile()
 
-        then(configFile).should(Times(1)).createNewFile()
+        then(configFile).should().createNewFile()
     }
 
     @Test
@@ -92,28 +91,28 @@ class AnimationScalesPersistenceHelperTest {
     fun `can check if output directory exists`() {
         classToTest.hasOutputDir()
 
-        then(outDir).should(Times(1)).exists()
+        then(outDir).should().exists()
     }
 
     @Test
     fun `can check if config file exists`() {
         classToTest.hasConfigFile()
 
-        then(configFile).should(Times(1)).exists()
+        then(configFile).should().exists()
     }
 
     @Test
     fun `can delete output directory`() {
         classToTest.deleteOutputDir()
 
-        then(outDir).should(Times(1)).delete()
+        then(outDir).should().delete()
     }
 
     @Test
     fun `can delete config file`() {
         classToTest.deleteConfigFile()
 
-        then(configFile).should(Times(1)).delete()
+        then(configFile).should().delete()
     }
 
     private fun createPersistenceHelperWithRealFiles(): AnimationScalesPersistenceHelper {

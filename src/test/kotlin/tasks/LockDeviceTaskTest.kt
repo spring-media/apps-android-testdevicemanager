@@ -74,7 +74,7 @@ class LockDeviceTaskTest : BaseTest() {
 
         task.runTaskFor(device)
 
-        then(device).should(Times(1)).executeShellCommand(eq(DUMPSYS_INPUT_METHOD), any())
+        then(device).should(Times(2)).executeShellCommand(eq(DUMPSYS_INPUT_METHOD), any())
         then(device).should().executeShellCommand(eq(INPUT_PRESS_POWER_BUTTON), any())
         thenDeviceShouldGetDetails(device)
     }

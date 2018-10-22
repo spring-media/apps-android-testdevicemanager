@@ -15,7 +15,7 @@ class AnimationScalesPersistenceHelper(
 
     fun createConfigFile() {
         configFile.createNewFile()
-        println("Config file will be created.")
+        println("${configFile.name} created.")
     }
 
     fun getValuesForDevice(androidId: String): HashMap<String, Float> {
@@ -30,38 +30,32 @@ class AnimationScalesPersistenceHelper(
     }
 
     fun appendTextToConfigFileForId(androidId: String, animationScaleValues: HashMap<String, Float>): File {
-        val stringBuilder = StringBuilder()
-        stringBuilder.apply {
-            append(androidId)
-            append(" ")
-        }
+        val stringBuilder = StringBuilder("$androidId ")
 
         animationScaleValues.forEach {
-            stringBuilder.apply {
-                append(it.value)
-                append(" ")
-            }
+            stringBuilder.append("${it.value} ")
         }
 
         stringBuilder.append("\n")
+
         val configEntry = stringBuilder.toString()
         configFile.appendText(configEntry)
         return configFile
     }
 
     fun deleteEntryForId(androidId: String): File {
-        val currentConfigFile = readConfigFileLines()
-        val stringBuilder = StringBuilder()
+        val fileLines = readConfigFileLines()
 
-        if (currentConfigFile.isNotEmpty()) {
-            currentConfigFile.forEach { line ->
-                if (!line.contains(androidId)) {
-                    stringBuilder.append(line).append("\n")
-                }
+        if (!fileLines.isNotEmpty()) return configFile
+
+        val stringBuilder = StringBuilder()
+        fileLines.forEach { line ->
+            if (!line.contains(androidId)) {
+                stringBuilder.append("$line\n")
             }
-            val newConfigFile = stringBuilder.toString()
-            configFile.writeText(newConfigFile)
         }
+        val newConfigFile = stringBuilder.toString()
+        configFile.writeText(newConfigFile)
         return configFile
     }
 

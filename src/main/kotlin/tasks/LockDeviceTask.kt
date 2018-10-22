@@ -1,10 +1,9 @@
 package tasks
 
-import internal.LockStatus.LOCK_DEVICE
 import tasks.internal.SetLockStatusTask
 
 
-open class LockDeviceTask : SetLockStatusTask(LOCK_DEVICE) {
+open class LockDeviceTask : SetLockStatusTask(lockDevice = true) {
 
     init {
         description = "lock the device"

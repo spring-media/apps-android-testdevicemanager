@@ -1,9 +1,8 @@
 package tasks
 
-import internal.SetAnimationsStatus.ENABLE_ANIMATIONS
 import tasks.internal.SetAnimationsTask
 
-open class EnableAnimationsTask : SetAnimationsTask(ENABLE_ANIMATIONS) {
+open class EnableAnimationsTask : SetAnimationsTask(enableAnimations = true) {
 
     init {
         description = "Enables animations for connected devices."

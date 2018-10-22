@@ -66,8 +66,8 @@ class UnlockerTest {
 
         classToTest.unlock()
 
-        then(device).should(Times(1)).executeShellCommand(eq(DUMPSYS_WINDOW), any())
-        then(device).should(Times(1)).executeShellCommand(eq("input swipe 50 160 80 40"), any())
+        then(device).should().executeShellCommand(eq(DUMPSYS_WINDOW), any())
+        then(device).should().executeShellCommand(eq("input swipe 50 160 80 40"), any())
     }
 
     @Test(expected = GradleException::class)
@@ -133,10 +133,14 @@ class UnlockerTest {
 
         classToTest.unlock()
 
+        thenPassPhraseShouldBeEntered(device, pin)
+    }
+
+    private fun thenPassPhraseShouldBeEntered(device: IDevice, passPhrase: String){
         then(device).should(Times(2)).executeShellCommand(eq(DUMPSYS_WINDOW), any())
-        then(device).should(Times(1)).executeShellCommand(eq("input swipe 50 160 80 40"), any())
-        then(device).should(Times(1)).executeShellCommand(eq("$INPUT_TEXT $pin"), any())
-        then(device).should(Times(1)).executeShellCommand(eq(INPUT_PRESS_ENTER), any())
+        then(device).should().executeShellCommand(eq("input swipe 50 160 80 40"), any())
+        then(device).should().executeShellCommand(eq("$INPUT_TEXT $passPhrase"), any())
+        then(device).should().executeShellCommand(eq(INPUT_PRESS_ENTER), any())
     }
 
     @Test(expected = GradleException::class)
@@ -181,10 +185,8 @@ class UnlockerTest {
 
         classToTest.unlock()
 
-        then(device).should(Times(2)).executeShellCommand(eq(DUMPSYS_WINDOW), any())
-        then(device).should(Times(1)).executeShellCommand(eq("input swipe 50 160 80 40"), any())
-        then(device).should(Times(1)).executeShellCommand(eq("$INPUT_TEXT $password"), any())
-        then(device).should(Times(1)).executeShellCommand(eq(INPUT_PRESS_ENTER), any())
+
+        thenPassPhraseShouldBeEntered(device, password)
     }
 
     @Test(expected = GradleException::class)

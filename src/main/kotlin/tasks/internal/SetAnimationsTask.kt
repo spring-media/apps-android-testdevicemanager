@@ -3,13 +3,10 @@ package tasks.internal
 import com.android.ddmlib.IDevice
 import internal.AnimationScalesPersistenceHelper
 import internal.DeviceWrapper
-import internal.SetAnimationsStatus
-import internal.SetAnimationsStatus.DISABLE_ANIMATIONS
-import internal.SetAnimationsStatus.ENABLE_ANIMATIONS
 import org.gradle.api.GradleException
 
 
-open class SetAnimationsTask(private val status: SetAnimationsStatus) : DefaultPluginTask() {
+open class SetAnimationsTask(private val enableAnimations: Boolean) : DefaultPluginTask() {
 
     lateinit var persistenceHelper: AnimationScalesPersistenceHelper
     lateinit var animationScalesSwitch: AnimationScalesSwitch
@@ -20,29 +17,26 @@ open class SetAnimationsTask(private val status: SetAnimationsStatus) : DefaultP
         val hasDirectory = persistenceHelper.hasOutputDir()
         val hasConfigFile = persistenceHelper.hasConfigFile()
 
-        when (status) {
-            ENABLE_ANIMATIONS  -> {
-                if (!hasDirectory) throw GradleException("Output directory cannot be found.")
-                if (!hasConfigFile) throw GradleException("Config file cannot be found.")
-            }
-            DISABLE_ANIMATIONS -> {
-                if (!hasDirectory) persistenceHelper.createOutputDirectory()
-                if (!hasConfigFile) persistenceHelper.createConfigFile()
-            }
+        if (enableAnimations) {
+            if (!hasDirectory) throw GradleException("Output directory cannot be found.")
+            if (!hasConfigFile) throw GradleException("Config file cannot be found.")
+        } else {
+            if (!hasDirectory) persistenceHelper.createOutputDirectory()
+            if (!hasConfigFile) persistenceHelper.createConfigFile()
         }
     }
 
     override fun runTaskFor(device: IDevice) {
         animationScalesSwitch.deviceWrapper = DeviceWrapper(device, outputReceiverProvider)
 
-        when (status) {
-            ENABLE_ANIMATIONS  -> animationScalesSwitch.enableAnimations()
-            DISABLE_ANIMATIONS -> animationScalesSwitch.disableAnimations()
-        }
+        if (enableAnimations)
+            animationScalesSwitch.enableAnimations()
+        else
+            animationScalesSwitch.disableAnimations()
     }
 
     override fun runPostTask() {
-        if (status == ENABLE_ANIMATIONS) {
+        if (enableAnimations) {
             persistenceHelper.deleteConfigFile()
             persistenceHelper.deleteOutputDir()
         }

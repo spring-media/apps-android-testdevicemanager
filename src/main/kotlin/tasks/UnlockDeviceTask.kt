@@ -2,12 +2,11 @@ package tasks
 
 import com.android.ddmlib.IDevice
 import internal.DeviceWrapper
-import internal.LockStatus.UNLOCK_DEVICE
 import org.gradle.api.tasks.Input
 import tasks.internal.SetLockStatusTask
 import tasks.internal.Unlocker
 
-open class UnlockDeviceTask : SetLockStatusTask(UNLOCK_DEVICE) {
+open class UnlockDeviceTask : SetLockStatusTask(lockDevice = false) {
 
     init {
         description = "unlock the device"
@@ -16,7 +15,6 @@ open class UnlockDeviceTask : SetLockStatusTask(UNLOCK_DEVICE) {
     companion object {
         const val MINIMUM_DIGITS = 4
         const val ANDROID_API_LEVEL_44W = 20
-
     }
 
     @Input

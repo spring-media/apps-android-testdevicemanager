@@ -32,14 +32,14 @@ class AnimationScalesSwitchTest {
     fun `can get android id for device when enabling animations`() {
         classToTest.enableAnimations()
 
-        then(deviceWrapper).should(Times(1)).getAndroidId()
+        then(deviceWrapper).should().getAndroidId()
     }
 
     @Test
     fun `can get animation values for device when enabling animations`() {
         classToTest.enableAnimations()
 
-        then(deviceWrapper).should(Times(1)).getAnimationValues()
+        then(deviceWrapper).should().getAnimationValues()
     }
 
     @Test
@@ -66,8 +66,8 @@ class AnimationScalesSwitchTest {
 
         then(deviceWrapper).should(never()).getDetails()
         then(persistenceHelper).should(Times(2)).getValuesForDevice(androidId)
-        then(deviceWrapper).should(Times(1)).setAnimationValues(valuesToRestore)
-        then(deviceWrapper).should(Times(1)).printAnimationValues()
+        then(deviceWrapper).should().setAnimationValues(valuesToRestore)
+        then(deviceWrapper).should().printAnimationValues()
     }
 
     @Test
@@ -89,8 +89,8 @@ class AnimationScalesSwitchTest {
 
         then(persistenceHelper).should(never()).getValuesForDevice(any())
         then(deviceWrapper).should(never()).getDetails()
-        then(deviceWrapper).should(Times(1)).setAnimationValues(animationValues1)
-        then(deviceWrapper).should(Times(1)).printAnimationValues()
+        then(deviceWrapper).should().setAnimationValues(animationValues1)
+        then(deviceWrapper).should().printAnimationValues()
     }
 
     @Test
@@ -98,14 +98,14 @@ class AnimationScalesSwitchTest {
 
         classToTest.disableAnimations()
 
-        then(deviceWrapper).should(Times(1)).getAndroidId()
+        then(deviceWrapper).should().getAndroidId()
     }
 
     @Test
     fun `can get animation values for device when disabling animations`() {
         classToTest.disableAnimations()
 
-        then(deviceWrapper).should(Times(1)).getAnimationValues()
+        then(deviceWrapper).should().getAnimationValues()
     }
 
     @Test
@@ -118,7 +118,7 @@ class AnimationScalesSwitchTest {
         then(persistenceHelper).should(never()).appendTextToConfigFileForId(any(), any())
         then(deviceWrapper).should(never()).setAnimationValues(animationValues0)
         then(deviceWrapper).should(never()).printAnimationValues()
-        then(deviceWrapper).should(Times(1)).getDetails()
+        then(deviceWrapper).should().getDetails()
     }
 
     @Test
@@ -128,10 +128,10 @@ class AnimationScalesSwitchTest {
         classToTest.disableAnimations()
 
         then(persistenceHelper).should(never()).deleteEntryForId(any())
-        then(persistenceHelper).should(Times(1)).appendTextToConfigFileForId(androidId, animationValues1)
+        then(persistenceHelper).should().appendTextToConfigFileForId(androidId, animationValues1)
         then(deviceWrapper).should(never()).setAnimationValues(animationValues0)
         then(deviceWrapper).should(never()).printAnimationValues()
-        then(deviceWrapper).should(Times(1)).getDetails()
+        then(deviceWrapper).should().getDetails()
     }
 
     @Test
@@ -141,10 +141,10 @@ class AnimationScalesSwitchTest {
 
         classToTest.disableAnimations()
 
-        then(persistenceHelper).should(Times(1)).deleteEntryForId(androidId)
-        then(persistenceHelper).should(Times(1)).appendTextToConfigFileForId(androidId, animationValues2)
-        then(deviceWrapper).should(Times(1)).setAnimationValues(animationValues0)
-        then(deviceWrapper).should(Times(1)).printAnimationValues()
+        then(persistenceHelper).should().deleteEntryForId(androidId)
+        then(persistenceHelper).should().appendTextToConfigFileForId(androidId, animationValues2)
+        then(deviceWrapper).should().setAnimationValues(animationValues0)
+        then(deviceWrapper).should().printAnimationValues()
         then(deviceWrapper).should(never()).getDetails()
     }
 
@@ -156,14 +156,14 @@ class AnimationScalesSwitchTest {
         classToTest.disableAnimations()
 
         then(persistenceHelper).should(never()).deleteEntryForId(any())
-        then(persistenceHelper).should(Times(1)).appendTextToConfigFileForId(androidId, animationValues2)
-        then(deviceWrapper).should(Times(1)).setAnimationValues(animationValues0)
-        then(deviceWrapper).should(Times(1)).printAnimationValues()
+        then(persistenceHelper).should().appendTextToConfigFileForId(androidId, animationValues2)
+        then(deviceWrapper).should().setAnimationValues(animationValues0)
+        then(deviceWrapper).should().printAnimationValues()
         then(deviceWrapper).should(never()).getDetails()
     }
 
     private fun thenOutputAnimationValues() {
-        then(deviceWrapper).should(Times(1)).getDetails()
-        then(deviceWrapper).should(Times(1)).printAnimationValues()
+        then(deviceWrapper).should().getDetails()
+        then(deviceWrapper).should().printAnimationValues()
     }
 }

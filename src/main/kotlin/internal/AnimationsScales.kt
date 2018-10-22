@@ -21,6 +21,6 @@ fun HashMap<String, Float>.areAllZero(): Boolean {
     return true
 }
 
-fun HashMap<String, Float>.haveNoZeros(): Boolean {
+fun HashMap<String, Float>.hasNoZeros(): Boolean {
     return !this.values.contains(0F)
 }

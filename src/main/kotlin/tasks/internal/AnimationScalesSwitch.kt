@@ -17,20 +17,20 @@ class AnimationScalesSwitch(private val persistenceHelper: AnimationScalesPersis
         updateDeviceValues()
 
         when {
-            currentDeviceValues.haveNoZeros() && persistenceHelper.hasOneEntryForId(androidId)   -> {
+            currentDeviceValues.hasNoZeros() && persistenceHelper.hasOneEntryForId(androidId)   -> {
                 println("Animations are already enabled for ${deviceWrapper.getDetails()}")
                 deviceWrapper.printAnimationValues()
             }
-            !currentDeviceValues.haveNoZeros() && persistenceHelper.hasOneEntryForId(androidId)  -> {
+            !currentDeviceValues.hasNoZeros() && persistenceHelper.hasOneEntryForId(androidId)  -> {
                 val valuesToRestore = persistenceHelper.getValuesForDevice(androidId)
                 deviceWrapper.setAnimationValues(valuesToRestore)
                 deviceWrapper.printAnimationValues()
             }
-            currentDeviceValues.haveNoZeros() && !persistenceHelper.hasOneEntryForId(androidId)  -> {
+            currentDeviceValues.hasNoZeros() && !persistenceHelper.hasOneEntryForId(androidId)  -> {
                 println("Animations are already enabled for ${deviceWrapper.getDetails()}")
                 deviceWrapper.printAnimationValues()
             }
-            !currentDeviceValues.haveNoZeros() && !persistenceHelper.hasOneEntryForId(androidId) -> {
+            !currentDeviceValues.hasNoZeros() && !persistenceHelper.hasOneEntryForId(androidId) -> {
                 deviceWrapper.setAnimationValues(animationScaleValuesOne)
                 deviceWrapper.printAnimationValues()
             }

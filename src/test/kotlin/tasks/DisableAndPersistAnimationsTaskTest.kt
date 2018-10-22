@@ -14,7 +14,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import org.mockito.internal.verification.Times
 import tasks.internal.AnimationScalesSwitch
 import java.io.File
 
@@ -70,7 +69,7 @@ class DisableAndPersistAnimationsTaskTest {
 
         task.runTask2()
 
-        then(persistenceHelper).should(Times(1)).createOutputDirectory()
+        then(persistenceHelper).should().createOutputDirectory()
     }
 
     @Test
@@ -79,7 +78,7 @@ class DisableAndPersistAnimationsTaskTest {
 
         task.runTask2()
 
-        then(persistenceHelper).should(Times(1)).createConfigFile()
+        then(persistenceHelper).should().createConfigFile()
     }
 
     @Test

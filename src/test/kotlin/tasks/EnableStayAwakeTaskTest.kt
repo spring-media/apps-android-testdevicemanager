@@ -13,10 +13,10 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import org.mockito.internal.verification.Times
+import tasks.internal.BaseTest
 import java.io.File
 
-class EnableStayAwakeTaskTest {
+class EnableStayAwakeTaskTest : BaseTest() {
 
     @Rule
     @JvmField
@@ -57,7 +57,7 @@ class EnableStayAwakeTaskTest {
         task.runTaskFor(device)
 
         then(device).should(never()).executeShellCommand(eq("$SETTINGS_PUT_STAY_ON $deviceStaysAwake"), any())
-        deviceDetailsShown()
+        thenDeviceShouldGetDetails(device)
     }
 
     @Test
@@ -67,13 +67,7 @@ class EnableStayAwakeTaskTest {
 
         task.runTaskFor(device)
 
-        then(device).should(Times(1)).executeShellCommand(eq("$SETTINGS_PUT_STAY_ON $deviceStaysAwake"), any())
-        deviceDetailsShown()
-    }
-
-    private fun deviceDetailsShown() {
-        then(device).should(Times(1)).getProperty("ro.product.model")
-        then(device).should(Times(1)).getProperty("ro.build.version.release")
-        then(device).should(Times(1)).getProperty("ro.build.version.sdk")
+        then(device).should().executeShellCommand(eq("$SETTINGS_PUT_STAY_ON $deviceStaysAwake"), any())
+        thenDeviceShouldGetDetails(device)
     }
 }

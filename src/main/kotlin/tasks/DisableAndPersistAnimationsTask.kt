@@ -1,9 +1,8 @@
 package tasks
 
-import internal.SetAnimationsStatus.DISABLE_ANIMATIONS
 import tasks.internal.SetAnimationsTask
 
-open class DisableAndPersistAnimationsTask : SetAnimationsTask(DISABLE_ANIMATIONS) {
+open class DisableAndPersistAnimationsTask : SetAnimationsTask(enableAnimations = false) {
 
     init {
         description = "Disables animations for connected devices."

@@ -15,7 +15,6 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import org.mockito.internal.verification.Times
 import tasks.internal.AnimationScalesSwitch
 import java.io.File
 
@@ -89,13 +88,13 @@ class EnableAnimationsTaskTest {
     fun `can delete config file`() {
         task.runPostTask()
 
-        then(persistenceHelper).should(Times(1)).deleteConfigFile()
+        then(persistenceHelper).should().deleteConfigFile()
     }
 
     @Test
     fun `can delete output directory`() {
         task.runPostTask()
 
-        then(persistenceHelper).should(Times(1)).deleteOutputDir()
+        then(persistenceHelper).should().deleteOutputDir()
     }
 }
