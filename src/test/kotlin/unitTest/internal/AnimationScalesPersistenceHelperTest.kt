@@ -4,7 +4,8 @@ import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.then
 import com.winterbe.expekt.should
 import internal.AnimationScalesPersistenceHelper
-import internal.AnimationsScales
+import internal.DataParser
+import internal.createAnimationsScalesWithValue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
