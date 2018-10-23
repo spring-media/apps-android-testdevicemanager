@@ -12,9 +12,9 @@ import org.gradle.api.GradleException
 import org.junit.Before
 import org.junit.Test
 import org.mockito.internal.verification.Times
-import tasks.internal.BaseTest
+import unitTest.tasks.internal.BaseUnitTest
 
-class DeviceWrapperTest : BaseTest() {
+class DeviceWrapperTest : BaseUnitTest() {
 
     val device: IDevice = mock()
     val outputReceiverProvider: OutputReceiverProvider = mock()

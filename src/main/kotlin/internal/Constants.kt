@@ -1,5 +1,7 @@
 package internal
 
+import org.gradle.api.GradleException
+
 object ShellCommands {
     const val DUMPSYS_INPUT_METHOD = "dumpsys input_method"
     const val DUMPSYS_WINDOW = "dumpsys window"
@@ -27,3 +29,7 @@ object ShellOutput {
 object GradleException {
     const val noDevicesConnected = "No devices connected."
 }
+
+class NoDevicesConnectedException(
+        override val message: String? = "No devices connected."
+): GradleException()

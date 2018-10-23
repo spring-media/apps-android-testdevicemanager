@@ -61,14 +61,14 @@ class DeviceWrapper(val device: IDevice, val outputReceiverProvider: OutputRecei
         return output.trim()
     }
 
-    fun getAnimationValues(): HashMap<String, Float> {
+    fun getAnimationValues(): LinkedHashMap<String, Float> {
         animationScales.forEach {
             animationScales[it.key] = getAnimationValue(it.key)
         }
         return animationScales
     }
 
-    fun setAnimationValues(scales: HashMap<String, Float>) {
+    fun setAnimationValues(scales: LinkedHashMap<String, Float>) {
         scales.forEach {
             setAnimationValue(it.key, it.value)
         }

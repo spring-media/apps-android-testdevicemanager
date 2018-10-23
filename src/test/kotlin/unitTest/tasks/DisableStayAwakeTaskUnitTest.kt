@@ -13,10 +13,10 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import tasks.internal.BaseTest
+import unitTest.tasks.internal.BaseUnitTest
 import java.io.File
 
-class EnableStayAwakeTaskTest : BaseTest() {
+class DisableStayAwakeTaskUnitTest : BaseUnitTest() {
 
     @Rule
     @JvmField
@@ -34,7 +34,7 @@ class EnableStayAwakeTaskTest : BaseTest() {
 
     lateinit var projectDir: File
     lateinit var project: Project
-    lateinit var task: EnableStayAwakeTask
+    lateinit var task: DisableStayAwakeTask
 
     @Before
     fun setup() {
@@ -42,7 +42,7 @@ class EnableStayAwakeTaskTest : BaseTest() {
         projectDir.mkdirs()
 
         project = ProjectBuilder.builder().withProjectDir(projectDir).build()
-        task = project.tasks.create("EnableStayAwakeTask", EnableStayAwakeTask::class.java)
+        task = project.tasks.create("DisableStayAwakeTask", DisableStayAwakeTask::class.java)
 
         task.communicator = deviceCommunicator
 
@@ -50,24 +50,24 @@ class EnableStayAwakeTaskTest : BaseTest() {
     }
 
     @Test
-    fun `only get device details when device is already set to stay awake`() {
+    fun `only get device details when device is already not staying awake`() {
         given(bridge.devices).willReturn(devices)
-        given(outputReceiver.output).willReturn(deviceStaysAwake)
+        given(outputReceiver.output).willReturn(deviceStaysNotAwake)
 
-        task.runTaskFor(device)
+        task.runTask2(device)
 
-        then(device).should(never()).executeShellCommand(eq("$SETTINGS_PUT_STAY_ON $deviceStaysAwake"), any())
+        then(device).should(never()).executeShellCommand(eq("$SETTINGS_PUT_STAY_ON $deviceStaysNotAwake"), any())
         thenDeviceShouldGetDetails(device)
     }
 
     @Test
-    fun `set awake status and get device details when device is not set to awake`() {
+    fun `set awake status and get device details when device is already not staying awake`() {
         given(bridge.devices).willReturn(devices)
-        given(outputReceiver.output).willReturn(deviceStaysNotAwake)
+        given(outputReceiver.output).willReturn(deviceStaysAwake)
 
-        task.runTaskFor(device)
+        task.runTask2(device)
 
-        then(device).should().executeShellCommand(eq("$SETTINGS_PUT_STAY_ON $deviceStaysAwake"), any())
+        then(device).should().executeShellCommand(eq("$SETTINGS_PUT_STAY_ON $deviceStaysNotAwake"), any())
         thenDeviceShouldGetDetails(device)
     }
 }

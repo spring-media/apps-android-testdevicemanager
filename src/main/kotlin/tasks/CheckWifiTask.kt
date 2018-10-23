@@ -22,13 +22,11 @@ open class CheckWifiTask : DefaultPluginTask() {
         }
     }
 
-    override fun runTask2() {}
-
-    override fun runTaskFor(device: IDevice) {
+    override fun runTask2(device: IDevice) {
         val deviceWrapper = DeviceWrapper(device, outputReceiverProvider)
         deviceWrapper.checkWifi(wifi)
         println("Device ${deviceWrapper.getDetails()} is connected to $wifi.")
     }
 
-    override fun runPostTask() {}
+    override fun runTask3() {}
 }

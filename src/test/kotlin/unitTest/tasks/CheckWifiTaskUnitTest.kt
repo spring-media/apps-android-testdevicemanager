@@ -14,11 +14,11 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import tasks.internal.BaseTest
+import unitTest.tasks.internal.BaseUnitTest
 import tasks.internal.DefaultPluginTask
 import java.io.File
 
-class CheckWifiTaskTest : BaseTest() {
+class CheckWifiTaskUnitTest : BaseUnitTest() {
 
     @Rule
     @JvmField
@@ -75,7 +75,7 @@ class CheckWifiTaskTest : BaseTest() {
         given(bridge.devices).willReturn(devices)
         given(outputReceiver.output).willReturn(mNetworkInfo)
 
-        task.runTaskFor(device)
+        task.runTask2(device)
 
         thenDeviceShouldGetDetails(device)
     }

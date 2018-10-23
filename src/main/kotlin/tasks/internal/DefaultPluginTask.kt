@@ -30,24 +30,20 @@ abstract class DefaultPluginTask : DefaultTask() {
     @TaskAction
     fun performTask() {
 
-        runTask1()
-
         bridge.devicesCanBeFound()
 
-        runTask2()
+        runTask1()
 
         bridge.devices.forEach { device ->
-            runTaskFor(device)
+            runTask2(device)
         }
 
-        runPostTask()
+        runTask3()
     }
 
     abstract fun runTask1()
 
-    abstract fun runTask2()
+    abstract fun runTask2(device: IDevice)
 
-    abstract fun runTaskFor(device: IDevice)
-
-    abstract fun runPostTask()
+    abstract fun runTask3()
 }

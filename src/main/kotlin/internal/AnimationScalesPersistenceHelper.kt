@@ -18,7 +18,7 @@ class AnimationScalesPersistenceHelper(
         println("${configFile.name} created.")
     }
 
-    fun getValuesForDevice(androidId: String): HashMap<String, Float> {
+    fun getValuesForDevice(androidId: String): LinkedHashMap<String, Float> {
         val configFileEntry = configFile.filterLines { it.contains(androidId) }
         return dataParser.getAnimationScalesFrom(configFileEntry[0])
     }
@@ -29,7 +29,7 @@ class AnimationScalesPersistenceHelper(
                 configFile.filterLines { it.contains(androidId) }.size == 1)
     }
 
-    fun appendTextToConfigFileForId(androidId: String, animationScaleValues: HashMap<String, Float>): File {
+    fun appendTextToConfigFileForId(androidId: String, animationScaleValues: LinkedHashMap<String, Float>): File {
         val stringBuilder = StringBuilder("$androidId ")
 
         animationScaleValues.forEach {

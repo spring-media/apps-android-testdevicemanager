@@ -59,19 +59,19 @@ class EnableAnimationsTaskTest {
     fun `gradle exception is thrown when outDir does not exist`() {
         given(persistenceHelper.hasOutputDir()).willReturn(false)
 
-        task.runTask2()
+        task.runTask1()
     }
 
     @Test(expected = GradleException::class)
     fun `gradle exception is thrown when config file does not exist`() {
         given(persistenceHelper.hasConfigFile()).willReturn(false)
 
-        task.runTask2()
+        task.runTask1()
     }
 
     @Test
     fun `can check for persistence`() {
-        task.runTask2()
+        task.runTask1()
 
         then(persistenceHelper).should().hasOutputDir()
         then(persistenceHelper).should().hasConfigFile()
@@ -79,21 +79,21 @@ class EnableAnimationsTaskTest {
 
     @Test
     fun `can enable animations via animationsScaleSwitch`() {
-        task.runTaskFor(device)
+        task.runTask2(device)
 
         then(animationsScalesSwitch).should().enableAnimations()
     }
 
     @Test
     fun `can delete config file`() {
-        task.runPostTask()
+        task.runTask3()
 
         then(persistenceHelper).should().deleteConfigFile()
     }
 
     @Test
     fun `can delete output directory`() {
-        task.runPostTask()
+        task.runTask3()
 
         then(persistenceHelper).should().deleteOutputDir()
     }

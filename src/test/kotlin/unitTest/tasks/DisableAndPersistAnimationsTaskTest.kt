@@ -1,4 +1,4 @@
-package tasks
+package unitTest.tasks
 
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.IDevice
@@ -14,6 +14,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import tasks.DisableAndPersistAnimationsTask
 import tasks.internal.AnimationScalesSwitch
 import java.io.File
 
@@ -57,7 +58,7 @@ class DisableAndPersistAnimationsTaskTest {
     @Test
     fun `can check persistence`() {
 
-        task.runTask2()
+        task.runTask1()
 
         then(persistenceHelper).should().hasOutputDir()
         then(persistenceHelper).should().hasConfigFile()
@@ -67,7 +68,7 @@ class DisableAndPersistAnimationsTaskTest {
     fun `output directory can be created`() {
         given(persistenceHelper.hasOutputDir()).willReturn(false)
 
-        task.runTask2()
+        task.runTask1()
 
         then(persistenceHelper).should().createOutputDirectory()
     }
@@ -76,14 +77,14 @@ class DisableAndPersistAnimationsTaskTest {
     fun `config file can be created`() {
         given(persistenceHelper.hasConfigFile()).willReturn(false)
 
-        task.runTask2()
+        task.runTask1()
 
         then(persistenceHelper).should().createConfigFile()
     }
 
     @Test
     fun `animations can be disabled by animationScalesSwitch`() {
-        task.runTaskFor(device)
+        task.runTask2(device)
 
         then(animationScalesSwitch).should().disableAnimations()
     }

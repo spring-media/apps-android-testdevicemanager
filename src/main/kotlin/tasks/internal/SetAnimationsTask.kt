@@ -11,9 +11,7 @@ open class SetAnimationsTask(private val enableAnimations: Boolean) : DefaultPlu
     lateinit var persistenceHelper: AnimationScalesPersistenceHelper
     lateinit var animationScalesSwitch: AnimationScalesSwitch
 
-    override fun runTask1() {}
-
-    override fun runTask2() {
+    override fun runTask1() {
         val hasDirectory = persistenceHelper.hasOutputDir()
         val hasConfigFile = persistenceHelper.hasConfigFile()
 
@@ -26,7 +24,7 @@ open class SetAnimationsTask(private val enableAnimations: Boolean) : DefaultPlu
         }
     }
 
-    override fun runTaskFor(device: IDevice) {
+    override fun runTask2(device: IDevice) {
         animationScalesSwitch.deviceWrapper = DeviceWrapper(device, outputReceiverProvider)
 
         if (enableAnimations)
@@ -35,7 +33,7 @@ open class SetAnimationsTask(private val enableAnimations: Boolean) : DefaultPlu
             animationScalesSwitch.disableAnimations()
     }
 
-    override fun runPostTask() {
+    override fun runTask3() {
         if (enableAnimations) {
             persistenceHelper.deleteConfigFile()
             persistenceHelper.deleteOutputDir()

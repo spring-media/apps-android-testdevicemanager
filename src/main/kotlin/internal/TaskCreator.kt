@@ -46,7 +46,7 @@ class TaskCreator(
         private val animationScalesSwitch: AnimationScalesSwitch
 ) {
 
-    fun create() {
+    fun createTasks() {
         project.tasks.create(UNLOCK.name, UNLOCK.type) {
             it.communicator = communicator
             it.unlockBy = extension.unlockBy

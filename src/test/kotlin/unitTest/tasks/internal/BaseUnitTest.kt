@@ -1,10 +1,10 @@
-package tasks.internal
+package unitTest.tasks.internal
 
 import com.android.ddmlib.IDevice
 import com.nhaarman.mockito_kotlin.then
 import org.mockito.internal.verification.Times
 
-open class BaseTest {
+open class BaseUnitTest {
 
     fun thenDeviceShouldGetDetails(device: IDevice, times: Int = 1) {
         then(device).should(Times(times)).getProperty("ro.product.model")

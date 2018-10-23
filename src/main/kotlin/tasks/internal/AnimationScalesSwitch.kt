@@ -7,7 +7,7 @@ class AnimationScalesSwitch(private val persistenceHelper: AnimationScalesPersis
     lateinit var deviceWrapper: DeviceWrapper
 
     private lateinit var androidId: String
-    private lateinit var currentDeviceValues: HashMap<String, Float>
+    private lateinit var currentDeviceValues: LinkedHashMap<String, Float>
 
     private val animationScaleValuesZero = createAnimationsScalesWithValue(0F)
     private val animationScaleValuesOne = createAnimationsScalesWithValue(1F)

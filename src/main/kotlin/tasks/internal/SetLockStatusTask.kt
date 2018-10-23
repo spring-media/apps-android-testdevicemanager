@@ -13,9 +13,7 @@ open class SetLockStatusTask(private val lockDevice: Boolean) : DefaultPluginTas
 
     override fun runTask1() {}
 
-    override fun runTask2() {}
-
-    override fun runTaskFor(device: IDevice) {
+    override fun runTask2(device: IDevice) {
         deviceWrapper = DeviceWrapper(device, outputReceiverProvider)
 
         if (device.version.isGreaterOrEqualThan(ANDROID_API_LEVEL_44W))
@@ -24,7 +22,7 @@ open class SetLockStatusTask(private val lockDevice: Boolean) : DefaultPluginTas
             setDeviceStatusForOlderDevices()
     }
 
-    override fun runPostTask() {}
+    override fun runTask3() {}
 
     private fun setDeviceStatusForNewerDevices() {
         val shellCommand = if (!lockDevice)
@@ -41,10 +39,7 @@ open class SetLockStatusTask(private val lockDevice: Boolean) : DefaultPluginTas
 
         when {
             requiresNoStatusChange -> outputDisplayStatus(false)
-            requiresStatusChange   -> {
-                deviceWrapper.executeShellCommandWithOutput(INPUT_PRESS_POWER_BUTTON)
-                outputDisplayStatus(true)
-            }
+            requiresStatusChange   -> pressPowerAndOutput()
         }
     }
 
@@ -56,5 +51,10 @@ open class SetLockStatusTask(private val lockDevice: Boolean) : DefaultPluginTas
             lockDevice && displayStatusChanged   -> println("$message deactivated & locked.")
             lockDevice && !displayStatusChanged  -> println("$message already deactivated.")
         }
+    }
+
+    private fun pressPowerAndOutput() {
+        deviceWrapper.executeShellCommandWithOutput(INPUT_PRESS_POWER_BUTTON)
+        outputDisplayStatus(true)
     }
 }

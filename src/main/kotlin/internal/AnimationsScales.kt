@@ -1,13 +1,13 @@
 package internal
 
-val animationScales = hashMapOf(
+val animationScales = linkedMapOf(
         "window_animation_scale" to 1.0F,
         "transition_animation_scale" to 1.0F,
         "animator_duration_scale" to 1.0F
 )
 
-fun createAnimationsScalesWithValue(value: Float): HashMap<String, Float> {
-    return hashMapOf(
+fun createAnimationsScalesWithValue(value: Float): LinkedHashMap<String, Float> {
+    return linkedMapOf(
             "window_animation_scale" to value,
             "transition_animation_scale" to value,
             "animator_duration_scale" to value

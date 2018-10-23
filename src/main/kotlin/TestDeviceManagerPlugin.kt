@@ -11,7 +11,7 @@ class TestDeviceManagerPlugin : Plugin<Project> {
     companion object {
         const val EXTENSION_NAME = "testDeviceManager"
         const val OUTPUT_DIRECTORY_PATH = "/generated/source/testDeviceManager"
-        const val CONFIG_FILE_PATH = "/generated/source/testDeviceManager/configFile.txt"
+        const val CONFIG_FILE_PATH = "$OUTPUT_DIRECTORY_PATH/configFile.txt"
     }
 
     private lateinit var project: Project
@@ -45,7 +45,7 @@ class TestDeviceManagerPlugin : Plugin<Project> {
                             extension,
                             communicator,
                             animationScalesPersistenceHelper,
-                            animationScalesSwitch).create()
+                            animationScalesSwitch).createTasks()
             }
         }
     }

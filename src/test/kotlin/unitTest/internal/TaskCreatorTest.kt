@@ -1,7 +1,10 @@
-package internal
+package unitTest.internal
 
 import TestDeviceManagerExtension
 import com.nhaarman.mockito_kotlin.*
+import internal.AnimationScalesPersistenceHelper
+import internal.DeviceCommunicator
+import internal.TaskCreator
 import org.gradle.api.Project
 import org.gradle.api.internal.tasks.DefaultTaskContainer
 import org.junit.Test
@@ -29,7 +32,7 @@ class TaskCreatorTest {
     fun `can create tasks`() {
         given(project.tasks).willReturn(taskContainer)
 
-        classToTest.create()
+        classToTest.createTasks()
 
         then(taskContainer).should().create(eq("connectedDeviceUnlock"), eq(UnlockDeviceTask::class.java), any())
         then(taskContainer).should().create(eq("connectedDeviceLock"), eq(LockDeviceTask::class.java), any())

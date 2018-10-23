@@ -26,8 +26,8 @@ open class UnlockDeviceTask : SetLockStatusTask(lockDevice = false) {
     @Input
     lateinit var password: String
 
-    override fun runTaskFor(device: IDevice) {
-        super.runTaskFor(device)
+    override fun runTask2(device: IDevice) {
+        super.runTask2(device)
 
         val deviceWrapper = DeviceWrapper(device, outputReceiverProvider)
         val unlocker = Unlocker(deviceWrapper, unlockBy, pin, password)

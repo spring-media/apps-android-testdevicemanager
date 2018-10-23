@@ -10,9 +10,8 @@ import internal.StayAwakeStatus.STAY_NOT_AWAKE
 open class SetStayAwakeStatusTask(private val status: StayAwakeStatus) : DefaultPluginTask() {
 
     override fun runTask1() {}
-    override fun runTask2() {}
 
-    override fun runTaskFor(device: IDevice) {
+    override fun runTask2(device: IDevice) {
         val deviceWrapper = DeviceWrapper(device, outputReceiverProvider)
 
         if (deviceWrapper.getStayAwakeStatus() != status.value) {
@@ -23,7 +22,7 @@ open class SetStayAwakeStatusTask(private val status: StayAwakeStatus) : Default
         }
     }
 
-    override fun runPostTask() {}
+    override fun runTask3() {}
 
     private fun setSuccessMessageFor(status: StayAwakeStatus, deviceWrapper: DeviceWrapper) {
         val successMessage = "Device ${deviceWrapper.getDetails()} will"

@@ -9,8 +9,8 @@ import internal.DeviceCommunicator
 import internal.OutputReceiverProvider
 import internal.ShellCommands.DUMPSYS_INPUT_METHOD
 import internal.ShellCommands.INPUT_PRESS_POWER_BUTTON
-import internal.ShellCommands.INPUT_WAKE_UP_CALL
-import internal.TaskNames.UNLOCK_TASK_NAME
+import internal.ShellCommands.INPUT_SLEEP_CALL
+import internal.TaskNames.LOCK_TASK_NAME
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
@@ -18,10 +18,10 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.mockito.internal.verification.Times
-import tasks.internal.BaseTest
+import unitTest.tasks.internal.BaseUnitTest
 import java.io.File
 
-class UnlockDeviceTaskTest : BaseTest() {
+class LockDeviceTaskUnitTest : BaseUnitTest() {
 
     @Rule
     @JvmField
@@ -34,17 +34,14 @@ class UnlockDeviceTaskTest : BaseTest() {
 
     val deviceCommunicator = DeviceCommunicator(bridge, outputReceiverProvider)
     val devices = arrayOf(device)
-    val unlockMethod = "power button"
-    val password = "test"
-    val pin = "1111"
-    val apiLevel20 = AndroidVersion("20")
-    val apiLevel19 = AndroidVersion("19")
     val displayOn = "mScreenOn=true"
     val emptyString = ""
+    val apiLevel20 = AndroidVersion("20")
+    val apiLevel19 = AndroidVersion("19")
 
     lateinit var projectDir: File
     lateinit var project: Project
-    lateinit var task: UnlockDeviceTask
+    lateinit var task: LockDeviceTask
 
     @Before
     fun setup() {
@@ -52,48 +49,33 @@ class UnlockDeviceTaskTest : BaseTest() {
         projectDir.mkdirs()
 
         project = ProjectBuilder.builder().withProjectDir(projectDir).build()
-        task = project.tasks.create(UNLOCK_TASK_NAME, UnlockDeviceTask::class.java)
+        task = project.tasks.create(LOCK_TASK_NAME, LockDeviceTask::class.java)
         task.communicator = deviceCommunicator
-        task.unlockBy = unlockMethod
-        task.password = password
-        task.pin = pin
 
         given(bridge.devices).willReturn(devices)
         given(outputReceiverProvider.get()).willReturn(outputReceiver)
     }
 
     @Test
-    fun `display can be activated by power button press for api level smaller twenty when display is off`() {
-        given(device.version).willReturn(apiLevel19)
-        given(outputReceiver.output).willReturn(emptyString)
-
-        task.runTaskFor(device)
-
-        then(device).should(Times(2)).executeShellCommand(eq(DUMPSYS_INPUT_METHOD), any())
-        then(device).should().executeShellCommand(eq(INPUT_PRESS_POWER_BUTTON), any())
-        thenDeviceShouldGetDetails(device)
-    }
-
-    @Test
-    fun `display will not be activated by power button press for api level smaller twenty when display is on`() {
-        given(device.version).willReturn(apiLevel19)
-        given(outputReceiver.output).willReturn(displayOn)
-
-        task.runTaskFor(device)
-
-        then(device).should(Times(2)).executeShellCommand(eq(DUMPSYS_INPUT_METHOD), any())
-        then(device).should(never()).executeShellCommand(eq(INPUT_PRESS_POWER_BUTTON), any())
-        thenDeviceShouldGetDetails(device)
-    }
-
-    @Test
-    fun `wake up call sent for api level twenty`() {
+    fun `display can be deactivated with sdk version equal twenty`() {
         given(device.version).willReturn(apiLevel20)
         given(outputReceiver.output).willReturn(emptyString)
 
-        task.runTaskFor(device)
+        task.runTask2(device)
 
-        then(device).should().executeShellCommand(eq(INPUT_WAKE_UP_CALL), any())
+        then(device).should().executeShellCommand(eq(INPUT_SLEEP_CALL), any())
+        thenDeviceShouldGetDetails(device)
+    }
+
+    @Test
+    fun `display can be deactivated with sdk version smaller than twenty`() {
+        given(device.version).willReturn(apiLevel19)
+        given(outputReceiver.output).willReturn(displayOn)
+
+        task.runTask2(device)
+
+        then(device).should(Times(2)).executeShellCommand(eq(DUMPSYS_INPUT_METHOD), any())
+        then(device).should().executeShellCommand(eq(INPUT_PRESS_POWER_BUTTON), any())
         thenDeviceShouldGetDetails(device)
     }
 }
