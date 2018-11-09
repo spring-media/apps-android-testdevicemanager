@@ -1,0 +1,25 @@
+def properties = "s3maven.properties"
+def key_access_key = "s3AccessKey"
+def key_secret_key = "s3SecretKey"
+
+// Find s3maven.properties in project root, or in $HOME/.gradle
+def propertiesFile = ["${rootDir}/${properties}", "${gradle.gradleUserHomeDir}/${properties}"].find {
+    file(it).exists()
+}
+
+if (propertiesFile) {
+    logger.info "Loading properties from ${propertiesFile}"
+    def props = new Properties()
+    props.load(new FileInputStream(propertiesFile))
+
+    def ak = props[key_access_key]
+    def sk = props[key_secret_key]
+
+    project.ext.set(key_access_key, ak)
+    project.ext.set(key_secret_key, sk)
+
+} else {
+    logger.info "Missing ${properties} file"
+    project.ext.set(key_access_key, "")
+    project.ext.set(key_secret_key, "")
+}

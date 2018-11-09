@@ -3,10 +3,13 @@ plugins {
     id 'com.gradle.plugin-publish' version '0.9.7'
     id 'java'
     id 'java-gradle-plugin'
+    id 'maven-publish'
 }
 
+apply from: 'properties-loader.gradle'
+
 group 'de.welt.apps'
-version '1.0'
+version '0.9'
 
 repositories {
     mavenCentral()
@@ -52,6 +55,27 @@ uploadArchives {
     repositories {
         mavenDeployer {
             repository(url: uri('repo'))
+        }
+    }
+}
+
+publishing {
+
+    repositories {
+        maven {
+            url "s3://natives-repo.welt.de/snapshot"
+            credentials(AwsCredentials) {
+                accessKey project.s3AccessKey
+                secretKey project.s3SecretKey
+            }
+        }
+    }
+    publications {
+        mavenJava(MavenPublication) {
+            groupId "$group"
+            artifactId 'testdevicemanager'
+            version "$version"
+            from components.java
         }
     }
 }
