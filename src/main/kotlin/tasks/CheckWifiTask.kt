@@ -1,43 +1,32 @@
 package tasks
 
-import internal.DeviceCommunicator
+import com.android.ddmlib.IDevice
 import internal.DeviceWrapper
-import internal.TaskInfo.GROUP_NAME
-import internal.devicesCanBeFound
-import org.gradle.api.DefaultTask
 import org.gradle.api.GradleException
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.TaskAction
+import tasks.internal.DefaultPluginTask
 
 
-open class CheckWifiTask : DefaultTask() {
-
-    init {
-        group = GROUP_NAME
-        description = "check if a connection to a specific wifi was established"
-    }
+open class CheckWifiTask : DefaultPluginTask() {
 
     @Input
     lateinit var wifi: String
 
-    @Input
-    lateinit var communicator: DeviceCommunicator
+    init {
+        description = "check if a connection to a specific wifi was established"
+    }
 
-    @TaskAction
-    fun checkWifi() {
-        val bridge = communicator.bridge
-        val provider = communicator.outputReceiverProvider
-
-        if (!wifi.isBlank()) {
-            bridge.devicesCanBeFound()
-
-            bridge.devices.forEach { device ->
-                val deviceWrapper = DeviceWrapper(device, provider)
-                deviceWrapper.checkWifi(wifi)
-                println("Device ${deviceWrapper.getDetails()} is connected to $wifi.")
-            }
-        } else {
+    override fun runTask1() {
+        if (wifi.isBlank()) {
             throw GradleException("No name for wifi maintained in build script.")
         }
     }
+
+    override fun runTask2(device: IDevice) {
+        val deviceWrapper = DeviceWrapper(device, outputReceiverProvider)
+        deviceWrapper.checkWifi(wifi)
+        println("Device ${deviceWrapper.getDetails()} is connected to $wifi.")
+    }
+
+    override fun runTask3() {}
 }

@@ -7,30 +7,30 @@ class AnimationScalesSwitch(private val persistenceHelper: AnimationScalesPersis
     lateinit var deviceWrapper: DeviceWrapper
 
     private lateinit var androidId: String
-    private lateinit var currentDeviceValues: AnimationsScales
+    private lateinit var currentDeviceValues: LinkedHashMap<String, Float>
 
-    private val animationScaleValuesZero = AnimationsScales(0F, 0F, 0F)
-    private val animationScaleValuesOne = AnimationsScales(1F, 1F, 1F)
+    private val animationScaleValuesZero = createAnimationsScalesWithValue(0F)
+    private val animationScaleValuesOne = createAnimationsScalesWithValue(1F)
 
     fun enableAnimations() {
 
         updateDeviceValues()
 
         when {
-            currentDeviceValues.haveNoZeros() && persistenceHelper.hasOneEntryForId(androidId)   -> {
+            currentDeviceValues.hasNoZeros() && persistenceHelper.hasOneEntryForId(androidId)   -> {
                 println("Animations are already enabled for ${deviceWrapper.getDetails()}")
                 deviceWrapper.printAnimationValues()
             }
-            !currentDeviceValues.haveNoZeros() && persistenceHelper.hasOneEntryForId(androidId)  -> {
+            !currentDeviceValues.hasNoZeros() && persistenceHelper.hasOneEntryForId(androidId)  -> {
                 val valuesToRestore = persistenceHelper.getValuesForDevice(androidId)
                 deviceWrapper.setAnimationValues(valuesToRestore)
                 deviceWrapper.printAnimationValues()
             }
-            currentDeviceValues.haveNoZeros() && !persistenceHelper.hasOneEntryForId(androidId)  -> {
+            currentDeviceValues.hasNoZeros() && !persistenceHelper.hasOneEntryForId(androidId)  -> {
                 println("Animations are already enabled for ${deviceWrapper.getDetails()}")
                 deviceWrapper.printAnimationValues()
             }
-            !currentDeviceValues.haveNoZeros() && !persistenceHelper.hasOneEntryForId(androidId) -> {
+            !currentDeviceValues.hasNoZeros() && !persistenceHelper.hasOneEntryForId(androidId) -> {
                 deviceWrapper.setAnimationValues(animationScaleValuesOne)
                 deviceWrapper.printAnimationValues()
             }

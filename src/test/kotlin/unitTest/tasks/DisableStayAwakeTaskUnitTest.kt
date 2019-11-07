@@ -1,24 +1,22 @@
-package unitTest.tasks
+package tasks
 
-import internal.DeviceCommunicator
-import internal.ShellCommands.SETTINGS_PUT_STAY_ON
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.CollectingOutputReceiver
 import com.android.ddmlib.IDevice
 import com.nhaarman.mockito_kotlin.*
+import internal.DeviceCommunicator
 import internal.OutputReceiverProvider
-import org.gradle.api.GradleException
+import internal.ShellCommands.SETTINGS_PUT_STAY_ON
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import org.mockito.internal.verification.Times
-import tasks.DisableStayAwakeTask
+import unitTest.tasks.internal.BaseUnitTest
 import java.io.File
 
-class DisableStayAwakeTaskTest {
+class DisableStayAwakeTaskUnitTest : BaseUnitTest() {
 
     @Rule
     @JvmField
@@ -30,7 +28,6 @@ class DisableStayAwakeTaskTest {
     val outputReceiverProvider: OutputReceiverProvider = mock()
 
     val deviceCommunicator = DeviceCommunicator(bridge, outputReceiverProvider)
-    val noDevices = emptyArray<IDevice>()
     val devices = arrayOf(device)
     val deviceStaysNotAwake = "0"
     val deviceStaysAwake = "2"
@@ -52,22 +49,15 @@ class DisableStayAwakeTaskTest {
         given(outputReceiverProvider.get()).willReturn(outputReceiver)
     }
 
-    @Test(expected = GradleException::class)
-    fun `throw gradle exception when no devices connected`() {
-        given(bridge.devices).willReturn(noDevices)
-
-        task.disableStayAwake()
-    }
-
     @Test
     fun `only get device details when device is already not staying awake`() {
         given(bridge.devices).willReturn(devices)
         given(outputReceiver.output).willReturn(deviceStaysNotAwake)
 
-        task.disableStayAwake()
+        task.runTask2(device)
 
         then(device).should(never()).executeShellCommand(eq("$SETTINGS_PUT_STAY_ON $deviceStaysNotAwake"), any())
-        deviceDetailsShown()
+        thenDeviceShouldGetDetails(device)
     }
 
     @Test
@@ -75,16 +65,9 @@ class DisableStayAwakeTaskTest {
         given(bridge.devices).willReturn(devices)
         given(outputReceiver.output).willReturn(deviceStaysAwake)
 
-        task.disableStayAwake()
+        task.runTask2(device)
 
-        then(device).should(Times(1)).executeShellCommand(eq("$SETTINGS_PUT_STAY_ON $deviceStaysNotAwake"), any())
-        deviceDetailsShown()
+        then(device).should().executeShellCommand(eq("$SETTINGS_PUT_STAY_ON $deviceStaysNotAwake"), any())
+        thenDeviceShouldGetDetails(device)
     }
-
-    private fun deviceDetailsShown() {
-        then(device).should(Times(1)).getProperty("ro.product.model")
-        then(device).should(Times(1)).getProperty("ro.build.version.release")
-        then(device).should(Times(1)).getProperty("ro.build.version.sdk")
-    }
-
 }

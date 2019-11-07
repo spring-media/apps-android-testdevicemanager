@@ -1,4 +1,4 @@
-package unitTest.internal
+package internal
 
 import com.android.ddmlib.CollectingOutputReceiver
 import com.android.ddmlib.IDevice
@@ -6,16 +6,15 @@ import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.then
 import com.winterbe.expekt.should
-import internal.AnimationsScales
-import internal.DeviceWrapper
-import internal.OutputReceiverProvider
-import internal.StayAwakeStatus.*
+import internal.StayAwakeStatus.STAY_AWAKE
+import internal.StayAwakeStatus.STAY_NOT_AWAKE
 import org.gradle.api.GradleException
 import org.junit.Before
 import org.junit.Test
 import org.mockito.internal.verification.Times
+import unitTest.tasks.internal.BaseUnitTest
 
-class DeviceWrapperTest{
+class DeviceWrapperTest : BaseUnitTest() {
 
     val device: IDevice = mock()
     val outputReceiverProvider: OutputReceiverProvider = mock()
@@ -33,9 +32,15 @@ class DeviceWrapperTest{
     val stayNotAwake = "0"
     val settingsGetStayOn = "settings get global stay_on_while_plugged_in"
     val settingsPutStayOn = "settings put global stay_on_while_plugged_in"
-    val settingsGetAndroidId= "settings get secure android_id"
+    val settingsGetAndroidId = "settings get secure android_id"
+    val settingsGetWindowAnimationScale = "settings get global window_animation_scale"
+    val settingsGetTransitionAnimationScale = "settings get global transition_animation_scale"
+    val settingsGetAnimatorDurationScale = "settings get global animator_duration_scale"
+    val settingsPutWindowAnimationScale = "settings put global window_animation_scale 1.0"
+    val settingsPutTransitionAnimationScale = "settings put global transition_animation_scale 1.0"
+    val settingsPutAnimatorDurationScale = "settings put global animator_duration_scale 1.0"
     val androidId = "androidId"
-    val animationsScales = AnimationsScales(1F, 1F, 1F)
+    val animationsScales = createAnimationsScalesWithValue(1F)
     val dumpsysInputMethod = "dumpsys input_method"
     val dumpSysWindow = "dumpsys window"
     val dumpSysWifi = "dumpsys wifi"
@@ -74,7 +79,7 @@ class DeviceWrapperTest{
     fun `can get details`() {
         classToTest.getDetails()
 
-        deviceShouldGetDetails(1)
+        thenDeviceShouldGetDetails(device)
     }
 
     @Test
@@ -84,8 +89,8 @@ class DeviceWrapperTest{
         val result = classToTest.getDeviceScreenResolution()
 
         deviceShouldExecuteShellCommand(dumpSysWindow, 1)
-        result.xCoordinate.should.equal(1080)
-        result.yCoordinate.should.equal(1920)
+        result.xValue.should.equal(1080)
+        result.yValue.should.equal(1920)
     }
 
 
@@ -176,9 +181,7 @@ class DeviceWrapperTest{
 
         val result = classToTest.getAnimationValues()
 
-        then(device).should(Times(1)).executeShellCommand("settings get global window_animation_scale", outputReceiver)
-        then(device).should(Times(1)).executeShellCommand("settings get global transition_animation_scale", outputReceiver)
-        then(device).should(Times(1)).executeShellCommand("settings get global animator_duration_scale", outputReceiver)
+        thenAnimationScalesShouldBeGathered()
         result.should.equal(animationsScales)
     }
 
@@ -188,9 +191,9 @@ class DeviceWrapperTest{
 
         classToTest.setAnimationValues(animationsScales)
 
-        then(device).should(Times(1)).executeShellCommand("settings put global window_animation_scale 1.0", outputReceiver)
-        then(device).should(Times(1)).executeShellCommand("settings put global transition_animation_scale 1.0", outputReceiver)
-        then(device).should(Times(1)).executeShellCommand("settings put global animator_duration_scale 1.0", outputReceiver)
+        deviceShouldExecuteShellCommand(settingsPutWindowAnimationScale)
+        deviceShouldExecuteShellCommand(settingsPutTransitionAnimationScale)
+        deviceShouldExecuteShellCommand(settingsPutAnimatorDurationScale)
     }
 
     @Test
@@ -199,10 +202,8 @@ class DeviceWrapperTest{
 
         classToTest.printAnimationValues()
 
-        then(device).should(Times(1)).executeShellCommand("settings get global window_animation_scale", outputReceiver)
-        then(device).should(Times(1)).executeShellCommand("settings get global transition_animation_scale", outputReceiver)
-        then(device).should(Times(1)).executeShellCommand("settings get global animator_duration_scale", outputReceiver)
-        deviceShouldGetDetails(3)
+        thenAnimationScalesShouldBeGathered()
+        thenDeviceShouldGetDetails(device,  3)
     }
 
     @Test
@@ -211,17 +212,17 @@ class DeviceWrapperTest{
 
         val result = classToTest.executeShellCommandWithOutput(settingsPutStayOn)
 
-        then(device).should(Times(1)).executeShellCommand(settingsPutStayOn, outputReceiver)
+        then(device).should().executeShellCommand(settingsPutStayOn, outputReceiver)
         result.should.equal(stayAwake)
     }
 
-    private fun deviceShouldExecuteShellCommand(command: String, times: Int) {
-        then(device).should(Times(times)).executeShellCommand(command, outputReceiver)
+    private fun thenAnimationScalesShouldBeGathered(){
+        deviceShouldExecuteShellCommand(settingsGetWindowAnimationScale)
+        deviceShouldExecuteShellCommand(settingsGetTransitionAnimationScale)
+        deviceShouldExecuteShellCommand(settingsGetAnimatorDurationScale)
     }
 
-    private fun deviceShouldGetDetails(times: Int){
-        then(device).should(Times(times)).getProperty("ro.product.model")
-        then(device).should(Times(times)).getProperty("ro.build.version.release")
-        then(device).should(Times(times)).getProperty("ro.build.version.sdk")
+    private fun deviceShouldExecuteShellCommand(command: String, times: Int = 1) {
+        then(device).should(Times(times)).executeShellCommand(command, outputReceiver)
     }
 }

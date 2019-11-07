@@ -2,46 +2,60 @@ package internal
 
 import java.io.File
 
-class AnimationScalesPersistenceHelper(private val outDir: File, private val configFile: File) {
+class AnimationScalesPersistenceHelper(
+        private val outDir: File,
+        private val configFile: File,
+        private val dataParser: DataParser
+) {
 
     fun createOutputDirectory() {
         outDir.mkdir()
-        println("Testdevicemanager directory created.")
+        println("/${outDir.name} directory created.")
     }
 
     fun createConfigFile() {
         configFile.createNewFile()
-        println("Config file will be created.")
+        println("${configFile.name} created.")
     }
 
-    fun getValuesForDevice(androidId: String): AnimationsScales {
-        val entry = configFile.readLines().filter { it.contains(androidId) }
-        return getValuesFromString(entry[0])
+    fun getValuesForDevice(androidId: String): LinkedHashMap<String, Float> {
+        val configFileEntry = configFile.filterLines { it.contains(androidId) }
+        return dataParser.getAnimationScalesFrom(configFileEntry[0])
     }
 
-    fun hasOneEntryForId(androidId: String) =
-            configFile.readLines().any { it.contains(androidId) } &&
-                    configFile.readLines().filter { it.contains(androidId) }.size == 1
+    fun hasOneEntryForId(androidId: String): Boolean {
+        val lines = readConfigFileLines()
+        return (lines.any { it.contains(androidId) } &&
+                configFile.filterLines { it.contains(androidId) }.size == 1)
+    }
 
-    fun appendTextToConfigFileForId(androidId: String, animationScaleValues: AnimationsScales): File {
-        val configEntry = "$androidId ${animationScaleValues.windowAnimation} " +
-                "${animationScaleValues.transitionAnimation} " +
-                "${animationScaleValues.animatorDuration} "
-        configFile.appendText("$configEntry \n")
+    fun appendTextToConfigFileForId(androidId: String, animationScaleValues: LinkedHashMap<String, Float>): File {
+        val stringBuilder = StringBuilder("$androidId ")
+
+        animationScaleValues.forEach {
+            stringBuilder.append("${it.value} ")
+        }
+
+        stringBuilder.append("\n")
+
+        val configEntry = stringBuilder.toString()
+        configFile.appendText(configEntry)
         return configFile
     }
 
     fun deleteEntryForId(androidId: String): File {
-        val lines = configFile.readLines()
-        if (lines.isNotEmpty()) {
-            var newString = ""
-            lines.forEach { line ->
-                if (!line.contains(androidId)) {
-                    newString = "$newString$line \n"
-                }
+        val fileLines = readConfigFileLines()
+
+        if (!fileLines.isNotEmpty()) return configFile
+
+        val stringBuilder = StringBuilder()
+        fileLines.forEach { line ->
+            if (!line.contains(androidId)) {
+                stringBuilder.append("$line\n")
             }
-            configFile.writeText(newString)
         }
+        val newConfigFile = stringBuilder.toString()
+        configFile.writeText(newConfigFile)
         return configFile
     }
 
@@ -53,12 +67,11 @@ class AnimationScalesPersistenceHelper(private val outDir: File, private val con
 
     fun deleteOutputDir() = outDir.delete()
 
-    private fun getValuesFromString(string: String): AnimationsScales {
-        val values = string.analyzeByRegex(".+ (\\d+.\\d+) (\\d+.\\d+) (\\d+.\\d+)")
-        return AnimationsScales(
-                windowAnimation = values.group(1).toFloat(),
-                transitionAnimation = values.group(2).toFloat(),
-                animatorDuration = values.group(3).toFloat()
-        )
+    private fun readConfigFileLines(): List<String> {
+        return configFile.readLines()
+    }
+
+    private fun File.filterLines(predicate: (String) -> Boolean): List<String> {
+        return this.readLines().filter(predicate)
     }
 }

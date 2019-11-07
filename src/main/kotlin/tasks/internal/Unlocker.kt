@@ -35,8 +35,8 @@ class Unlocker(
 
     private fun unlockBySwipe() {
         val resolution = deviceWrapper.getDeviceScreenResolution()
-        val screenWidth = resolution.xCoordinate
-        val screenHeight = resolution.yCoordinate
+        val screenWidth = resolution.xValue
+        val screenHeight = resolution.yValue
         val inputSwipeToUnlock = "input swipe ${screenWidth / 2} ${screenHeight - (screenHeight / 5)} " +
                 "${screenWidth - (screenWidth / 5)} ${screenHeight / 5}"
 
@@ -63,7 +63,8 @@ class Unlocker(
 
         val length = pin.length
         if (length < MINIMUM_DIGITS) {
-            throw GradleException("Pin maintained for unlocking the device contains only $length digits. 4 digits is the minimum.")
+            throw GradleException("Pin maintained for unlocking the device contains only $length digits. " +
+                                          "$MINIMUM_DIGITS digits is the minimum.")
         }
     }
 
