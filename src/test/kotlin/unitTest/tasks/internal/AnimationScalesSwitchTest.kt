@@ -90,8 +90,49 @@ class AnimationScalesSwitchTest {
 
         then(persistenceHelper).should(never()).getValuesForDevice(any())
         then(deviceWrapper).should(never()).getDetails()
-        then(deviceWrapper).should().setAnimationValues(animationValues1)
+        thenSetAndOutputAnimationScales()
+    }
+
+    @Test
+    fun `device values have no zeros and no output directory exists`() {
+        given(deviceWrapper.getAnimationValues()).willReturn(animationValues1)
+        given(persistenceHelper.hasOutputDir()).willReturn(false)
+
+        classToTest.enableAnimations()
+
+        then(deviceWrapper).should().getDetails()
         then(deviceWrapper).should().printAnimationValues()
+    }
+
+    @Test
+    fun `device values have no zeros and no config file exists`() {
+        given(deviceWrapper.getAnimationValues()).willReturn(animationValues1)
+        given(persistenceHelper.hasConfigFile()).willReturn(false)
+
+        classToTest.enableAnimations()
+
+        then(deviceWrapper).should().getDetails()
+        then(deviceWrapper).should().printAnimationValues()
+    }
+
+    @Test
+    fun `device values have zeros and no output directory exists`() {
+        given(deviceWrapper.getAnimationValues()).willReturn(animationValues0)
+        given(persistenceHelper.hasOutputDir()).willReturn(false)
+
+        classToTest.enableAnimations()
+
+        thenSetAndOutputAnimationScales()
+    }
+
+    @Test
+    fun `device values have zeros and no config file exists`() {
+        given(deviceWrapper.getAnimationValues()).willReturn(animationValues0)
+        given(persistenceHelper.hasConfigFile()).willReturn(false)
+
+        classToTest.enableAnimations()
+
+        thenSetAndOutputAnimationScales()
     }
 
     @Test
@@ -101,6 +142,7 @@ class AnimationScalesSwitchTest {
 
         then(deviceWrapper).should().getAndroidId()
     }
+
 
     @Test
     fun `can get animation values for device when disabling animations`() {
@@ -161,6 +203,11 @@ class AnimationScalesSwitchTest {
         then(deviceWrapper).should().setAnimationValues(animationValues0)
         then(deviceWrapper).should().printAnimationValues()
         then(deviceWrapper).should(never()).getDetails()
+    }
+
+    private fun thenSetAndOutputAnimationScales() {
+        then(deviceWrapper).should().setAnimationValues(animationValues1)
+        then(deviceWrapper).should().printAnimationValues()
     }
 
     private fun thenOutputAnimationValues() {

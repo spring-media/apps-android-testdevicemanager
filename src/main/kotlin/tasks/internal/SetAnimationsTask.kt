@@ -3,7 +3,6 @@ package tasks.internal
 import com.android.ddmlib.IDevice
 import internal.AnimationScalesPersistenceHelper
 import internal.DeviceWrapper
-import org.gradle.api.GradleException
 
 
 open class SetAnimationsTask(private val enableAnimations: Boolean) : DefaultPluginTask() {
@@ -11,13 +10,13 @@ open class SetAnimationsTask(private val enableAnimations: Boolean) : DefaultPlu
     lateinit var persistenceHelper: AnimationScalesPersistenceHelper
     lateinit var animationScalesSwitch: AnimationScalesSwitch
 
-    override fun runTask1() {
-        val hasDirectory = persistenceHelper.hasOutputDir()
-        val hasConfigFile = persistenceHelper.hasConfigFile()
+    private val hasDirectory = persistenceHelper.hasOutputDir()
+    private val hasConfigFile = persistenceHelper.hasConfigFile()
 
+    override fun runTask1() {
         if (enableAnimations) {
-            if (!hasDirectory) throw GradleException("Output directory cannot be found.")
-            if (!hasConfigFile) throw GradleException("Config file cannot be found.")
+            if (!hasDirectory)  println("Output directory cannot be found - using default values.")
+            if (!hasConfigFile) println("Config file cannot be found - using default values.")
         } else {
             if (!hasDirectory) persistenceHelper.createOutputDirectory()
             if (!hasConfigFile) persistenceHelper.createConfigFile()
@@ -34,7 +33,7 @@ open class SetAnimationsTask(private val enableAnimations: Boolean) : DefaultPlu
     }
 
     override fun runTask3() {
-        if (enableAnimations) {
+        if (enableAnimations && hasDirectory && hasConfigFile) {
             persistenceHelper.deleteConfigFile()
             persistenceHelper.deleteOutputDir()
         }

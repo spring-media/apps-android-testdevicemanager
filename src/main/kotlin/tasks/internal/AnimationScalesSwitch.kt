@@ -9,8 +9,8 @@ class AnimationScalesSwitch(private val persistenceHelper: AnimationScalesPersis
     private lateinit var androidId: String
     private lateinit var currentDeviceValues: LinkedHashMap<String, Float>
 
-    private val animationScaleValuesZero = createAnimationsScalesWithValue(0F)
-    private val animationScaleValuesOne = createAnimationsScalesWithValue(1F)
+    private val animationScaleValuesZero = createAnimationsScalesWithValue(scaleValueZero)
+    private val animationScaleValuesOne = createAnimationsScalesWithValue(scaleValueOne)
 
     fun enableAnimations() {
 
@@ -18,8 +18,7 @@ class AnimationScalesSwitch(private val persistenceHelper: AnimationScalesPersis
 
         when {
             currentDeviceValues.hasNoZeros() && persistenceHelper.hasOneEntryForId(androidId)   -> {
-                println("Animations are already enabled for ${deviceWrapper.getDetails()}")
-                deviceWrapper.printAnimationValues()
+                outputAnimationValues()
             }
             !currentDeviceValues.hasNoZeros() && persistenceHelper.hasOneEntryForId(androidId)  -> {
                 val valuesToRestore = persistenceHelper.getValuesForDevice(androidId)
@@ -27,12 +26,22 @@ class AnimationScalesSwitch(private val persistenceHelper: AnimationScalesPersis
                 deviceWrapper.printAnimationValues()
             }
             currentDeviceValues.hasNoZeros() && !persistenceHelper.hasOneEntryForId(androidId)  -> {
-                println("Animations are already enabled for ${deviceWrapper.getDetails()}")
-                deviceWrapper.printAnimationValues()
+                outputAnimationValues()
             }
             !currentDeviceValues.hasNoZeros() && !persistenceHelper.hasOneEntryForId(androidId) -> {
-                deviceWrapper.setAnimationValues(animationScaleValuesOne)
-                deviceWrapper.printAnimationValues()
+                setAndOutputAnimationValues()
+            }
+            currentDeviceValues.hasNoZeros() && !persistenceHelper.hasOutputDir() -> {
+                outputAnimationValues()
+            }
+            currentDeviceValues.hasNoZeros() && !persistenceHelper.hasConfigFile() -> {
+                outputAnimationValues()
+            }
+            !currentDeviceValues.hasNoZeros() && !persistenceHelper.hasOutputDir() -> {
+                setAndOutputAnimationValues()
+            }
+            !currentDeviceValues.hasNoZeros() && !persistenceHelper.hasConfigFile() -> {
+                setAndOutputAnimationValues()
             }
         }
     }
@@ -64,6 +73,16 @@ class AnimationScalesSwitch(private val persistenceHelper: AnimationScalesPersis
     private fun updateDeviceValues() {
         androidId = deviceWrapper.getAndroidId()
         currentDeviceValues = deviceWrapper.getAnimationValues()
+    }
+
+    private fun outputAnimationValues() {
+        println("Animations are already enabled for ${deviceWrapper.getDetails()}")
+        deviceWrapper.printAnimationValues()
+    }
+
+    private fun setAndOutputAnimationValues() {
+        deviceWrapper.setAnimationValues(animationScaleValuesOne)
+        deviceWrapper.printAnimationValues()
     }
 
     private fun setValuesToZero(deviceWrapper: DeviceWrapper) {
