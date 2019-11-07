@@ -9,6 +9,7 @@ group 'de.welt.apps'
 version '1.0'
 
 repositories {
+    mavenLocal()
     mavenCentral()
     jcenter()
 }
@@ -50,6 +51,7 @@ apply plugin: 'maven'
 
 uploadArchives {
     repositories {
+        mavenLocal()
         mavenDeployer {
             repository(url: uri('repo'))
         }

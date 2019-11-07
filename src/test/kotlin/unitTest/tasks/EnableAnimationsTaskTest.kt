@@ -55,20 +55,6 @@ class EnableAnimationsTaskTest {
         given(persistenceHelper.hasConfigFile()).willReturn(true)
     }
 
-    @Test(expected = GradleException::class)
-    fun `gradle exception is thrown when outDir does not exist`() {
-        given(persistenceHelper.hasOutputDir()).willReturn(false)
-
-        task.runTask1()
-    }
-
-    @Test(expected = GradleException::class)
-    fun `gradle exception is thrown when config file does not exist`() {
-        given(persistenceHelper.hasConfigFile()).willReturn(false)
-
-        task.runTask1()
-    }
-
     @Test
     fun `can check for persistence`() {
         task.runTask1()
