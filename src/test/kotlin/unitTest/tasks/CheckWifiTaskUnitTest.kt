@@ -1,4 +1,4 @@
-package tasks
+package unitTest.tasks
 
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.CollectingOutputReceiver
@@ -14,6 +14,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import tasks.CheckWifiTask
 import unitTest.tasks.internal.BaseUnitTest
 import tasks.internal.DefaultPluginTask
 import java.io.File

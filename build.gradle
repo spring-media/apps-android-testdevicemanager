@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'de.welt.apps'
-version '1.0'
+version '1.0.0.2'
 
 repositories {
     mavenLocal()
@@ -17,6 +17,7 @@ repositories {
 dependencies {
     compile gradleApi()
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    compile "org.jetbrains.kotlin:kotlin-reflect:1.3.50"
     compile 'com.android.tools.build:gradle:2.3.3'
 
     testImplementation gradleTestKit()
@@ -28,7 +29,6 @@ dependencies {
     testImplementation('com.winterbe:expekt:0.5.0') {
         exclude module: "kotlin-stdlib"
     }
-
 }
 
 compileKotlin {

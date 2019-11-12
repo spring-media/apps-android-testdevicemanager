@@ -22,26 +22,19 @@ class AnimationScalesSwitch(private val persistenceHelper: AnimationScalesPersis
             }
             !currentDeviceValues.hasNoZeros() && persistenceHelper.hasOneEntryForId(androidId)  -> {
                 val valuesToRestore = persistenceHelper.getValuesForDevice(androidId)
-                deviceWrapper.setAnimationValues(valuesToRestore)
-                deviceWrapper.printAnimationValues()
+                setAndOutputAnimationValues(valuesToRestore)
             }
             currentDeviceValues.hasNoZeros() && !persistenceHelper.hasOneEntryForId(androidId)  -> {
                 outputAnimationValues()
             }
             !currentDeviceValues.hasNoZeros() && !persistenceHelper.hasOneEntryForId(androidId) -> {
-                setAndOutputAnimationValues()
-            }
-            currentDeviceValues.hasNoZeros() && !persistenceHelper.hasOutputDir() -> {
-                outputAnimationValues()
+                setAndOutputAnimationValues(animationScaleValuesOne)
             }
             currentDeviceValues.hasNoZeros() && !persistenceHelper.hasConfigFile() -> {
                 outputAnimationValues()
             }
-            !currentDeviceValues.hasNoZeros() && !persistenceHelper.hasOutputDir() -> {
-                setAndOutputAnimationValues()
-            }
             !currentDeviceValues.hasNoZeros() && !persistenceHelper.hasConfigFile() -> {
-                setAndOutputAnimationValues()
+                setAndOutputAnimationValues(animationScaleValuesOne)
             }
         }
     }
@@ -76,12 +69,11 @@ class AnimationScalesSwitch(private val persistenceHelper: AnimationScalesPersis
     }
 
     private fun outputAnimationValues() {
-        println("Animations are already enabled for ${deviceWrapper.getDetails()}")
         deviceWrapper.printAnimationValues()
     }
 
-    private fun setAndOutputAnimationValues() {
-        deviceWrapper.setAnimationValues(animationScaleValuesOne)
+    private fun setAndOutputAnimationValues(values: LinkedHashMap<String, Float>) {
+        deviceWrapper.setAnimationValues(values)
         deviceWrapper.printAnimationValues()
     }
 
@@ -89,5 +81,4 @@ class AnimationScalesSwitch(private val persistenceHelper: AnimationScalesPersis
         deviceWrapper.setAnimationValues(animationScaleValuesZero)
         deviceWrapper.printAnimationValues()
     }
-
 }

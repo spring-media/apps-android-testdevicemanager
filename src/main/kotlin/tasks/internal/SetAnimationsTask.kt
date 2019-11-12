@@ -12,32 +12,30 @@ open class SetAnimationsTask(private val enableAnimations: Boolean) : DefaultPlu
 
 
     override fun runTask1() {
-        val hasDirectory = persistenceHelper.hasOutputDir()
         val hasConfigFile = persistenceHelper.hasConfigFile()
         if (enableAnimations) {
-            if (!hasDirectory)  println("Output directory cannot be found - using default values.")
             if (!hasConfigFile) println("Config file cannot be found - using default values.")
         } else {
-            if (!hasDirectory) persistenceHelper.createOutputDirectory()
-            if (!hasConfigFile) persistenceHelper.createConfigFile()
+            if (!hasConfigFile) persistenceHelper.createConfigFileInPath()
         }
     }
 
     override fun runTask2(device: IDevice) {
         animationScalesSwitch.deviceWrapper = DeviceWrapper(device, outputReceiverProvider)
 
-        if (enableAnimations)
+        if (enableAnimations) {
             animationScalesSwitch.enableAnimations()
-        else
+        }
+        else {
             animationScalesSwitch.disableAnimations()
+        }
     }
 
     override fun runTask3() {
-        val hasDirectory = persistenceHelper.hasOutputDir()
         val hasConfigFile = persistenceHelper.hasConfigFile()
-        if (enableAnimations && hasDirectory && hasConfigFile) {
+
+        if (enableAnimations && hasConfigFile) {
             persistenceHelper.deleteConfigFile()
-            persistenceHelper.deleteOutputDir()
         }
     }
 

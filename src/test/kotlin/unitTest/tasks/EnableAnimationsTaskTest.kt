@@ -1,20 +1,21 @@
-package tasks
+package unitTest.tasks
 
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.IDevice
 import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.then
 import internal.AnimationScalesPersistenceHelper
 import internal.DeviceCommunicator
 import internal.OutputReceiverProvider
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.testfixtures.ProjectBuilder
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import tasks.EnableAnimationsTask
 import tasks.internal.AnimationScalesSwitch
 import java.io.File
 
@@ -51,7 +52,6 @@ class EnableAnimationsTaskTest {
         task.animationScalesSwitch = animationsScalesSwitch
 
         given(bridge.devices).willReturn(devices)
-        given(persistenceHelper.hasOutputDir()).willReturn(true)
         given(persistenceHelper.hasConfigFile()).willReturn(true)
     }
 
@@ -59,7 +59,6 @@ class EnableAnimationsTaskTest {
     fun `can check for persistence`() {
         task.runTask1()
 
-        then(persistenceHelper).should().hasOutputDir()
         then(persistenceHelper).should().hasConfigFile()
     }
 
@@ -81,6 +80,15 @@ class EnableAnimationsTaskTest {
     fun `can delete output directory`() {
         task.runTask3()
 
-        then(persistenceHelper).should().deleteOutputDir()
+        then(persistenceHelper).should().deleteConfigFile()
+    }
+
+    @Test
+    fun `will not delete configFile when there is no config file`() {
+        given(persistenceHelper.hasConfigFile()).willReturn(false)
+
+        task.runTask3()
+
+        then(persistenceHelper).should(never()).deleteConfigFile()
     }
 }

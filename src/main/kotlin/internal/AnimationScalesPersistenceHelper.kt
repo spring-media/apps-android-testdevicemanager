@@ -1,21 +1,24 @@
 package internal
 
+import TestDeviceManagerPlugin.Companion.CONFIG_FILE_PATH
+import org.gradle.api.Project
 import java.io.File
 
 class AnimationScalesPersistenceHelper(
-        private val outDir: File,
-        private val configFile: File,
+        private val project: Project,
         private val dataParser: DataParser
 ) {
 
-    fun createOutputDirectory() {
-        outDir.mkdir()
-        println("/${outDir.name} directory created.")
+    private val configFile: File by lazy {
+        File(project.buildDir, CONFIG_FILE_PATH)
     }
 
-    fun createConfigFile() {
-        configFile.createNewFile()
-        println("${configFile.name} created.")
+    fun createConfigFileInPath() {
+        if (configFile.parentFile.mkdirs()) {
+            println("/${configFile.parentFile.name} directory created...")
+            configFile.createNewFile()
+            println("${configFile.name} created.")
+        }
     }
 
     fun getValuesForDevice(androidId: String): LinkedHashMap<String, Float> {
@@ -24,12 +27,13 @@ class AnimationScalesPersistenceHelper(
     }
 
     fun hasOneEntryForId(androidId: String): Boolean {
-        val lines = readConfigFileLines()
-        return (lines.any { it.contains(androidId) } &&
-                configFile.filterLines { it.contains(androidId) }.size == 1)
+        return readConfigFileLines()?.let { lines ->
+            (lines.any { it.contains(androidId) } &&
+                    configFile.filterLines { it.contains(androidId) }.size == 1)
+        } ?: false
     }
 
-    fun appendTextToConfigFileForId(androidId: String, animationScaleValues: LinkedHashMap<String, Float>): File {
+    fun appendTextToConfigFileForId(androidId: String, animationScaleValues: LinkedHashMap<String, Float>) {
         val stringBuilder = StringBuilder("$androidId ")
 
         animationScaleValues.forEach {
@@ -40,35 +44,37 @@ class AnimationScalesPersistenceHelper(
 
         val configEntry = stringBuilder.toString()
         configFile.appendText(configEntry)
-        return configFile
     }
 
-    fun deleteEntryForId(androidId: String): File {
-        val fileLines = readConfigFileLines()
+    fun deleteEntryForId(androidId: String) {
+        readConfigFileLines()?.let { lines ->
+            if (!lines.isNotEmpty()) return
 
-        if (!fileLines.isNotEmpty()) return configFile
-
-        val stringBuilder = StringBuilder()
-        fileLines.forEach { line ->
-            if (!line.contains(androidId)) {
-                stringBuilder.append("$line\n")
+            val stringBuilder = StringBuilder()
+            lines.forEach { line ->
+                if (!line.contains(androidId)) {
+                    stringBuilder.append("$line\n")
+                }
             }
+            val newConfigFile = stringBuilder.toString()
+            configFile.writeText(newConfigFile)
         }
-        val newConfigFile = stringBuilder.toString()
-        configFile.writeText(newConfigFile)
-        return configFile
     }
-
-    fun hasOutputDir() = outDir.exists()
 
     fun hasConfigFile() = configFile.exists()
 
-    fun deleteConfigFile() = configFile.delete()
+    fun deleteConfigFile() {
+        if (hasConfigFile()) {
+            val path = configFile.parentFile
+            configFile.delete()
+            path.delete()
+        }
+    }
 
-    fun deleteOutputDir() = outDir.delete()
-
-    private fun readConfigFileLines(): List<String> {
-        return configFile.readLines()
+    private fun readConfigFileLines(): List<String>? {
+        return if (configFile.exists()) {
+            configFile.readLines()
+        } else null
     }
 
     private fun File.filterLines(predicate: (String) -> Boolean): List<String> {
