@@ -1,9 +1,12 @@
 package internal
 
+const val scaleValueOne = 1.0F
+const val scaleValueZero = 0.0F
+
 val animationScales = linkedMapOf(
-        "window_animation_scale" to 1.0F,
-        "transition_animation_scale" to 1.0F,
-        "animator_duration_scale" to 1.0F
+        "window_animation_scale" to scaleValueOne,
+        "transition_animation_scale" to scaleValueOne,
+        "animator_duration_scale" to scaleValueOne
 )
 
 fun createAnimationsScalesWithValue(value: Float): LinkedHashMap<String, Float> {

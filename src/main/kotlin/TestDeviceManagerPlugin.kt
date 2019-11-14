@@ -19,7 +19,6 @@ class TestDeviceManagerPlugin : Plugin<Project> {
     private lateinit var bridge: AndroidDebugBridge
     private lateinit var extension: TestDeviceManagerExtension
     private lateinit var outDir: File
-    private lateinit var configFile: File
     private lateinit var dataParser: DataParser
     private lateinit var communicator: DeviceCommunicator
     private lateinit var outputReceiverProvider: OutputReceiverProvider
@@ -51,10 +50,8 @@ class TestDeviceManagerPlugin : Plugin<Project> {
     }
 
     private fun init() {
-        outDir = File(project.buildDir, OUTPUT_DIRECTORY_PATH)
-        configFile = File(project.buildDir, CONFIG_FILE_PATH)
         dataParser = DataParser()
-        animationScalesPersistenceHelper = AnimationScalesPersistenceHelper(outDir, configFile, dataParser)
+        animationScalesPersistenceHelper = AnimationScalesPersistenceHelper(project, dataParser)
         animationScalesSwitch = AnimationScalesSwitch(animationScalesPersistenceHelper)
     }
 }

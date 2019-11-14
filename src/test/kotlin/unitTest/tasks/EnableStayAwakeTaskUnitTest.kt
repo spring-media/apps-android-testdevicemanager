@@ -1,4 +1,4 @@
-package tasks
+package unitTest.tasks
 
 import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.CollectingOutputReceiver
@@ -13,6 +13,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
+import tasks.EnableStayAwakeTask
 import unitTest.tasks.internal.BaseUnitTest
 import java.io.File
 

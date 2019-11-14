@@ -4,6 +4,7 @@ import com.android.ddmlib.AndroidDebugBridge
 import com.android.ddmlib.IDevice
 import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.mock
+import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.then
 import internal.AnimationScalesPersistenceHelper
 import internal.DeviceCommunicator
@@ -51,26 +52,21 @@ class DisableAndPersistAnimationsTaskTest {
         task.animationScalesSwitch = animationScalesSwitch
 
         given(bridge.devices).willReturn(devices)
-        given(persistenceHelper.hasOutputDir()).willReturn(true)
         given(persistenceHelper.hasConfigFile()).willReturn(true)
     }
 
     @Test
     fun `can check persistence`() {
-
         task.runTask1()
 
-        then(persistenceHelper).should().hasOutputDir()
         then(persistenceHelper).should().hasConfigFile()
     }
 
     @Test
     fun `output directory can be created`() {
-        given(persistenceHelper.hasOutputDir()).willReturn(false)
-
         task.runTask1()
 
-        then(persistenceHelper).should().createOutputDirectory()
+        then(persistenceHelper).should(never()).createConfigFileInPath()
     }
 
     @Test
@@ -79,7 +75,7 @@ class DisableAndPersistAnimationsTaskTest {
 
         task.runTask1()
 
-        then(persistenceHelper).should().createConfigFile()
+        then(persistenceHelper).should().createConfigFileInPath()
     }
 
     @Test
@@ -88,4 +84,12 @@ class DisableAndPersistAnimationsTaskTest {
 
         then(animationScalesSwitch).should().disableAnimations()
     }
+
+    @Test
+    fun `should check for config file in task 3`() {
+        task.runTask3()
+
+        then(persistenceHelper).should().hasConfigFile()
+    }
+
 }

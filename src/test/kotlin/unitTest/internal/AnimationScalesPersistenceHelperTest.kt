@@ -1,11 +1,13 @@
 package unitTest.internal
 
+import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.then
 import com.winterbe.expekt.should
 import internal.AnimationScalesPersistenceHelper
 import internal.DataParser
-import internal.createAnimationsScalesWithValue
+import org.gradle.api.Project
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -17,55 +19,47 @@ class AnimationScalesPersistenceHelperTest {
     @JvmField
     val temporaryFolder = TemporaryFolder()
 
-    private val outDir: File = mock()
-    private val configFile: File = mock()
     private val dataParser: DataParser = mock()
+    private val project: Project = mock()
 
     private val androidId = "androidId"
     private val androidId2 = "androidId2"
-    private val configFileString = "androidId 1.0 1.0 1.0"
-    private val configFileString2 = "androidId2 1.0 1.0 1.0"
-    private val animationsScales = createAnimationsScalesWithValue(1F)
+    private val androidAnimationScaleValues = linkedMapOf(
+            "animation1" to 1.0F,
+            "animation2" to 2.0F
+    )
+    private val configFileString = "androidId 1.0 2.0 "
 
     private val classToTest = AnimationScalesPersistenceHelper(
-            outDir,
-            configFile,
+            project,
             dataParser
     )
 
-    @Test
-    fun `can create output directory`() {
-        classToTest.createOutputDirectory()
+    @Before
+    fun setup() {
+        val persistence = createPersistence()
 
-        then(outDir).should().mkdir()
-    }
-
-    @Test
-    fun `can create config file`() {
-        classToTest.createConfigFile()
-
-        then(configFile).should().createNewFile()
+        given(project.buildDir).willReturn(persistence.first)
+        classToTest.createConfigFileInPath()
+        classToTest.appendTextToConfigFileForId(androidId, androidAnimationScaleValues)
     }
 
     @Test
     fun `can get values from dataParser`() {
-        val classToTest = createPersistenceHelperWithRealFiles()
         classToTest.getValuesForDevice(androidId)
 
         then(dataParser).should().getAnimationScalesFrom(configFileString)
     }
 
     @Test
-    fun `check if file has one entry for id can be true`() {
-        val classToTest = createPersistenceHelperWithRealFiles()
+    fun `file has one entry for id and returns true`() {
         val result = classToTest.hasOneEntryForId(androidId)
 
         result.should.be.equal(true)
     }
 
     @Test
-    fun `check if file has one entry for id can be false`() {
-        val classToTest = createPersistenceHelperWithRealFiles()
+    fun `file has no entry for id and returns false`() {
         val result = classToTest.hasOneEntryForId(androidId2)
 
         result.should.be.equal(false)
@@ -73,54 +67,36 @@ class AnimationScalesPersistenceHelperTest {
 
     @Test
     fun `text can be append to config file`() {
-        val classToTest = createPersistenceHelperWithRealFiles()
-        val file = classToTest.appendTextToConfigFileForId(androidId2, animationsScales)
-        val result = file.readText()
+        classToTest.appendTextToConfigFileForId(androidId2, androidAnimationScaleValues)
 
-        result.should.contain(configFileString2)
+        val result = classToTest.hasOneEntryForId(androidId2)
+
+        result.should.be.`true`
     }
 
     @Test
     fun `entry of config file can be deleted`() {
-        val classToTest = createPersistenceHelperWithRealFiles()
+        classToTest.deleteEntryForId(androidId)
 
-        val file = classToTest.deleteEntryForId(androidId)
-        val result = file.readText()
+        val result = classToTest.hasOneEntryForId(androidId)
 
-        result.should.be.empty
-    }
-
-    @Test
-    fun `can check if output directory exists`() {
-        classToTest.hasOutputDir()
-
-        then(outDir).should().exists()
+        result.should.be.`false`
     }
 
     @Test
     fun `can check if config file exists`() {
-        classToTest.hasConfigFile()
+        val result = classToTest.hasConfigFile()
 
-        then(configFile).should().exists()
-    }
-
-    @Test
-    fun `can delete output directory`() {
-        classToTest.deleteOutputDir()
-
-        then(outDir).should().delete()
+        result.should.be.`true`
     }
 
     @Test
     fun `can delete config file`() {
         classToTest.deleteConfigFile()
 
-        then(configFile).should().delete()
-    }
+        val result = classToTest.hasConfigFile()
 
-    private fun createPersistenceHelperWithRealFiles(): AnimationScalesPersistenceHelper {
-        val persistence = createPersistence()
-        return AnimationScalesPersistenceHelper(persistence.first, persistence.second, dataParser)
+        result.should.be.`false`
     }
 
     private fun createPersistence(): Pair<File, File> {

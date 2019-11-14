@@ -1,4 +1,4 @@
-package internal
+package unitTest.internal
 
 import com.android.ddmlib.CollectingOutputReceiver
 import com.android.ddmlib.IDevice
@@ -6,8 +6,11 @@ import com.nhaarman.mockito_kotlin.given
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.then
 import com.winterbe.expekt.should
+import internal.DeviceWrapper
+import internal.OutputReceiverProvider
 import internal.StayAwakeStatus.STAY_AWAKE
 import internal.StayAwakeStatus.STAY_NOT_AWAKE
+import internal.createAnimationsScalesWithValue
 import org.gradle.api.GradleException
 import org.junit.Before
 import org.junit.Test
