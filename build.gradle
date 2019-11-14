@@ -13,7 +13,6 @@ group 'de.welt.apps'
 version '1.1'
 
 repositories {
-    mavenLocal()
     mavenCentral()
     jcenter()
 }
@@ -51,24 +50,15 @@ gradlePlugin {
     }
 }
 
-publishing {
+pluginBundle {
+    website = 'http://www.gradle.org/'
+    vcsUrl = 'https://github.com/spring-media/apps-android-testdevicemanager'
+    description = 'Setup your Android test device for ui testing.'
+    tags = ['test device', 'setup device', 'Espresso', 'Android', 'ui testing']
 
-    repositories {
-        mavenLocal()
-        maven {
-            url "s3://natives-repo.welt.de/snapshot"
-            credentials(AwsCredentials) {
-                accessKey project.s3AccessKey
-                secretKey project.s3SecretKey
-            }
-        }
-    }
-    publications {
-        mavenJava(MavenPublication) {
-            groupId "$group"
-            artifactId 'testdevicemanager'
-            version "$version"
-            from components.java
+    plugins {
+        testDeviceManagerPlugin {
+            displayName = 'Test Device Manager Plugin'
         }
     }
 }
