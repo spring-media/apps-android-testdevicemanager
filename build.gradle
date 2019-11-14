@@ -51,9 +51,9 @@ gradlePlugin {
 }
 
 pluginBundle {
-    website = 'http://www.gradle.org/'
+    website = 'https://github.com/spring-media/apps-android-testdevicemanager'
     vcsUrl = 'https://github.com/spring-media/apps-android-testdevicemanager'
-    description = 'Setup your Android test device for ui testing.'
+    description = 'Setup your Android test device for UI testing.'
     tags = ['test device', 'setup device', 'Espresso', 'Android', 'ui testing']
 
     plugins {
