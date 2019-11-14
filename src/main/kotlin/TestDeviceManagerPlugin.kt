@@ -51,7 +51,7 @@ class TestDeviceManagerPlugin : Plugin<Project> {
 
     private fun init() {
         dataParser = DataParser()
-        animationScalesPersistenceHelper = AnimationScalesPersistenceHelper(/*outDir,*/ project, /*configFile,*/ dataParser)
+        animationScalesPersistenceHelper = AnimationScalesPersistenceHelper(project, dataParser)
         animationScalesSwitch = AnimationScalesSwitch(animationScalesPersistenceHelper)
     }
 }

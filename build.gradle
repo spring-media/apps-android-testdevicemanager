@@ -4,12 +4,13 @@ plugins {
     id 'java'
     id 'java-gradle-plugin'
     id 'maven-publish'
+    id 'maven'
 }
 
 apply from: 'properties-loader.gradle'
 
 group 'de.welt.apps'
-version '1.0.0.2'
+version '1.1'
 
 repositories {
     mavenLocal()
@@ -50,20 +51,10 @@ gradlePlugin {
     }
 }
 
-apply plugin: 'maven'
-
-uploadArchives {
-    repositories {
-        mavenLocal()
-        mavenDeployer {
-            repository(url: uri('repo'))
-        }
-    }
-}
-
 publishing {
 
     repositories {
+        mavenLocal()
         maven {
             url "s3://natives-repo.welt.de/snapshot"
             credentials(AwsCredentials) {

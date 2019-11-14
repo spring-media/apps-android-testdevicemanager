@@ -47,11 +47,11 @@ class AnimationScalesPersistenceHelper(
     }
 
     fun deleteEntryForId(androidId: String) {
-        readConfigFileLines()?.let { lines ->
-            if (!lines.isNotEmpty()) return
+        readConfigFileLines()?.run {
+            if (isEmpty()) return
 
             val stringBuilder = StringBuilder()
-            lines.forEach { line ->
+            forEach { line ->
                 if (!line.contains(androidId)) {
                     stringBuilder.append("$line\n")
                 }
@@ -71,10 +71,9 @@ class AnimationScalesPersistenceHelper(
         }
     }
 
-    private fun readConfigFileLines(): List<String>? {
-        return if (configFile.exists()) {
-            configFile.readLines()
-        } else null
+    private fun readConfigFileLines(): List<String>? = configFile.run {
+        if (exists()) readLines()
+        else null
     }
 
     private fun File.filterLines(predicate: (String) -> Boolean): List<String> {
