@@ -24,11 +24,13 @@ The following things can be managed by the plugin:
 # Integration into the project
 ## Groovy
 ### Plugins DSL
+```
 plugins {
   id "de.welt.apps.testdevicemanager" version "1.1"
 }
-
+```
 ### Legacy plugin application
+```
 buildscript {
   repositories {
     maven {
@@ -41,14 +43,16 @@ buildscript {
 }
 
 apply plugin: "de.welt.apps.testdevicemanager"
-
+```
 ## Kotlin
 ### Plugins DSL
+```
 plugins {
   id("de.welt.apps.testdevicemanager") version "1.1"
 }
-
+```
 ### Legacy plugin application
+```
 buildscript {
   repositories {
     maven {
@@ -61,7 +65,7 @@ buildscript {
 }
 
 apply(plugin = "de.welt.apps.testdevicemanager")
-
+```
 # Setup
 All of the following extension values can be maintained but do not need to be used at all.
 ``` 
@@ -97,5 +101,3 @@ The following tasks will be added to the ```device setup``` section of the gradl
 ```
 Run these tasks before you run your espresso tests and setup your test devices.
 
-# More detailed information
-// add Link to article on Medium.ocm
