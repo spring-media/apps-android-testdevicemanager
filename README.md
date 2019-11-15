@@ -22,7 +22,45 @@ The following things can be managed by the plugin:
 - Checking for connection to a specific WLAN - A check for a connection to a specific WLAN can be done
 
 # Integration into the project
-//maintain steps for integrating into project
+## Groovy
+### Plugins DSL
+plugins {
+  id "de.welt.apps.testdevicemanager" version "1.1"
+}
+
+### Legacy plugin application
+buildscript {
+  repositories {
+    maven {
+      url "https://plugins.gradle.org/m2/"
+    }
+  }
+  dependencies {
+    classpath "de.welt.apps:testdevicemanager:1.1"
+  }
+}
+
+apply plugin: "de.welt.apps.testdevicemanager"
+
+## Kotlin
+### Plugins DSL
+plugins {
+  id("de.welt.apps.testdevicemanager") version "1.1"
+}
+
+### Legacy plugin application
+buildscript {
+  repositories {
+    maven {
+      url = uri("https://plugins.gradle.org/m2/")
+    }
+  }
+  dependencies {
+    classpath("de.welt.apps:testdevicemanager:1.1")
+  }
+}
+
+apply(plugin = "de.welt.apps.testdevicemanager")
 
 # Setup
 All of the following extension values can be maintained but do not need to be used at all.
