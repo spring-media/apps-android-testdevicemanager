@@ -5,5 +5,6 @@ open class TestDeviceManagerExtension {
     var pin: String = ""
     var password: String = ""
     var wifi: String = ""
+    var language: String = ""
 }
 
