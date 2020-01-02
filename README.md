@@ -5,21 +5,21 @@
 Gradle custom plugin to setup android test devices.
 
 # Problem
-When running Espresso tests for your Android projects on real devices you need to setup these before the tests. Doing this manually takes time and is cumbersome.
+When running Espresso tests for your Android projects on real devices you need to setup these before the tests run. Doing this manually takes time and is cumbersome.
 
 # Solution
-Testdevicemanager - It is a custom gradle plugin written in Kotlin. It uses ```adb commands``` to get and set device information. Therefore no additional access rights for connected mobile devices are required.
+Testdevicemanager - It is a custom gradle plugin written in Kotlin. It uses ```adb commands``` to get and set device information. This way, no additional access rights for connected mobile devices are required.
 
 # Features
-The following things can be managed by the plugin:
+The following things are handled by the plugin:
 
-- Locking / Unlocking the device - The device can be unlocked via pressing the power button, swiping, entering a pin or a password
+- Locking / Unlocking the device - The device will be unlocked by pressing the power button, swiping, entering a pin or a password
 
-- Enabling / Disabling animations - To make sure espresso ui tests run smoothly, animations can be deactivated in the developer options of the test device
+- Enabling / Disabling animations - To make sure espresso ui tests run smoothly, animations will be deactivated in the developer options of the test device
 
-- Enabling / Disabling the stay awake mode - The device's stay awake mode can be activated in the developer options of the test device, to make sure that the test device does not switch of the screen during testing
+- Enabling / Disabling the stay awake mode - The device's stay awake mode will be activated in the developer options of the test device, to make sure that the test device does not switch of the screen during testing
 
-- Checking for connection to a specific WLAN - A check for a connection to a specific WLAN can be done
+- Checking for connection to a specific WLAN - A check for a connection to a specific WLAN will be performed
 
 # Integration into the project
 ## Groovy
@@ -67,7 +67,7 @@ buildscript {
 apply(plugin = "de.welt.apps.testdevicemanager")
 ```
 # Setup
-All of the following extension values can be maintained but do not need to be used at all.
+All of the following extension values can be used but do not need to be used at all.
 ``` 
 testDeviceManager {
     unlockBy = "power button | swipe | pin | password"
