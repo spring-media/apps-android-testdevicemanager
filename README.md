@@ -4,18 +4,18 @@
 # apps-android-testdevicemanager
 Gradle custom plugin to setup android test devices.
 
-# What is it?
-Testdevicemanager is a custom gradle plugin written in Kotlin. It uses ```adb commands``` to get and set device information. Therefore no additional access rights for connected mobile devices are required.
+# Problem
+When running Espresso tests for your Android projects on real devices you need to setup these before the tests. Doing this manually takes time and is cumbersome.
 
-# What's its purpose?
-Testdevicemanager can be used to set up test devices for espresso ui testing.
+# Solution
+Testdevicemanager - It is a custom gradle plugin written in Kotlin. It uses ```adb commands``` to get and set device information. Therefore no additional access rights for connected mobile devices are required.
 
 # Features
 The following things can be managed by the plugin:
 
 - Locking / Unlocking the device - The device can be unlocked via pressing the power button, swiping, entering a pin or a password
 
-- Disabling / Enabling animations - To make sure espresso ui tests run smoothly, animations can be deactivated in the developer options of the test device
+- Enabling / Disabling animations - To make sure espresso ui tests run smoothly, animations can be deactivated in the developer options of the test device
 
 - Enabling / Disabling the stay awake mode - The device's stay awake mode can be activated in the developer options of the test device, to make sure that the test device does not switch of the screen during testing
 
