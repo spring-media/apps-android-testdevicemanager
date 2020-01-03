@@ -6,6 +6,9 @@ import org.gradle.api.GradleException
 import org.gradle.api.tasks.Input
 
 open class LanguageTask : DefaultPluginTask() {
+    protected lateinit var deviceWrapper: DeviceWrapper
+    protected lateinit var currentLanguage: String
+
     @Input
     lateinit var language: String
 
@@ -16,13 +19,14 @@ open class LanguageTask : DefaultPluginTask() {
     }
 
     override fun runTask2(device: IDevice) {
-        val deviceWrapper = DeviceWrapper(device, outputReceiverProvider)
-        val currentLanguage = deviceWrapper.getLanguage()
-        if (currentLanguage != language) {
-            throw LanguageCheckException("Different language set on ${deviceWrapper.getDetails()}. " +
-                    "It's $currentLanguage, while $language was expected.")
-        }
-        println("Device ${deviceWrapper.getDetails()} has locale set to $currentLanguage.")
+        hasLocaleDifferentThanExpected(device)
+    }
+
+    protected fun hasLocaleDifferentThanExpected(device: IDevice) :Boolean {
+        deviceWrapper = DeviceWrapper(device, outputReceiverProvider)
+        currentLanguage = deviceWrapper.getLanguage()
+
+        return currentLanguage != language
     }
 
     override fun runTask3() {}
