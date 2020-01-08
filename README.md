@@ -64,7 +64,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath("de.welt.apps:testdevicemanager:1.1")
+    classpath("de.welt.apps:testdevicemanager:1.2")
   }
 }
 
