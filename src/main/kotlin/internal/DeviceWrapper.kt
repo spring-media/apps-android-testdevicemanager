@@ -1,7 +1,10 @@
 package internal
 
 import com.android.ddmlib.IDevice
+import com.android.ddmlib.IDevice.*
+import internal.External.CHANGE_LANGUAGE_APP
 import internal.GradleException.noDevicesConnected
+import internal.ShellCommands.CHANGE_LANGUAGE_VIA_APP
 import internal.ShellCommands.DUMPSYS_INPUT_METHOD
 import internal.ShellCommands.DUMPSYS_WIFI
 import internal.ShellCommands.DUMPSYS_WINDOW
@@ -11,6 +14,7 @@ import internal.ShellCommands.SETTINGS_GET_STAY_ON
 import internal.ShellCommands.SETTINGS_PUT_GLOBAL
 import internal.ShellCommands.SETTINGS_PUT_STAY_ON
 import internal.ShellOutput.noDeviceError
+import internal.SystemProperties.LOCALE
 import org.gradle.api.GradleException
 import java.util.regex.Matcher
 
@@ -22,9 +26,9 @@ class DeviceWrapper(val device: IDevice, val outputReceiverProvider: OutputRecei
     }
 
     fun getDetails(): String {
-        return "${device.getProperty("ro.product.model")} " +
-                "- Android ${device.getProperty("ro.build.version.release")} " +
-                "(API level: ${device.getProperty("ro.build.version.sdk")})"
+        return "${device.getProperty(PROP_DEVICE_MODEL)} " +
+                "- Android ${device.getProperty(PROP_BUILD_VERSION)} " +
+                "(API level: ${device.getProperty(PROP_BUILD_API_LEVEL)})"
     }
 
     fun getDeviceScreenResolution(): ScreenResolution {
@@ -54,6 +58,26 @@ class DeviceWrapper(val device: IDevice, val outputReceiverProvider: OutputRecei
 
     fun setStayAwakeStatus(status: StayAwakeStatus) {
         executeShellCommandWithOutput("$SETTINGS_PUT_STAY_ON ${status.value}")
+    }
+
+    fun getLanguage(): String {
+        return device.getProperty(LOCALE)
+    }
+
+    fun setLanguage(locale: String) {
+        if (checkChangeLanguageAppIsInstalled() ) {
+            executeShellCommandWithOutput("pm grant $CHANGE_LANGUAGE_APP android.permission.CHANGE_CONFIGURATION ")
+            executeShellCommandWithOutput("$CHANGE_LANGUAGE_VIA_APP $locale")
+        }
+        else {
+           throw GradleException("missing the external app ADB Change Language ($CHANGE_LANGUAGE_APP) " +
+                    "- you can install it from the Play Store")
+        }
+    }
+
+    private fun checkChangeLanguageAppIsInstalled(): Boolean {
+        val output = executeShellCommandWithOutput("pm list packages $CHANGE_LANGUAGE_APP")
+        return output.trim() == "package:$CHANGE_LANGUAGE_APP"
     }
 
     fun getAndroidId(): String {

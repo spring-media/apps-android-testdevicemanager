@@ -1,5 +1,6 @@
 package internal
 
+import internal.External.CHANGE_LANGUAGE_APP
 import org.gradle.api.GradleException
 
 object ShellCommands {
@@ -16,6 +17,15 @@ object ShellCommands {
     const val SETTINGS_GET_STAY_ON = "settings get global stay_on_while_plugged_in"
     const val SETTINGS_PUT_GLOBAL = "settings put global"
     const val SETTINGS_GET_GLOBAL = "settings get global"
+    const val CHANGE_LANGUAGE_VIA_APP ="am start -n $CHANGE_LANGUAGE_APP/.AdbChangeLanguage -e language "
+}
+
+object SystemProperties {
+    const val LOCALE = "persist.sys.locale"
+}
+
+object External {
+    const val CHANGE_LANGUAGE_APP= "net.sanapeli.adbchangelanguage"
 }
 
 object TaskInfo {

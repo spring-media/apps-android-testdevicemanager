@@ -21,12 +21,16 @@ The following things are handled by the plugin:
 
 - Checking for connection to a specific WLAN - A check for a connection to a specific WLAN will be performed
 
+- checking language set on the device
+
+- setting language on the device - possible only when additional app is installed: AdbChangeLanguage available in Google Play: https://play.google.com/store/apps/details?id=net.sanapeli.adbchangelanguage
+
 # Integration into the project
 ## Groovy
 ### Plugins DSL
 ```
 plugins {
-  id "de.welt.apps.testdevicemanager" version "1.1"
+  id "de.welt.apps.testdevicemanager" version "1.2"
 }
 ```
 ### Legacy plugin application
@@ -38,7 +42,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "de.welt.apps:testdevicemanager:1.1"
+    classpath "de.welt.apps:testdevicemanager:1.2"
   }
 }
 
@@ -48,7 +52,7 @@ apply plugin: "de.welt.apps.testdevicemanager"
 ### Plugins DSL
 ```
 plugins {
-  id("de.welt.apps.testdevicemanager") version "1.1"
+  id("de.welt.apps.testdevicemanager") version "1.2"
 }
 ```
 ### Legacy plugin application
@@ -74,6 +78,7 @@ testDeviceManager {
     pin = "9999"
     password = "password"
     wifi = "wifi-name"
+    language = "en-US"
 }
 ```
 # Compatibility
@@ -93,9 +98,11 @@ The following tasks will be added to the ```device setup``` section of the gradl
 ```
 -connectedAnimationsDisable
 -connectedAnimationsEnable
+-connectedCheckLanguage
 -connectedCheckWifi
 -connectedDeviceLock
 -connectedDeviceUnlock
+-connectedSetLanguage
 -connectedStayAwakeDisable
 -connectedStayAwakeEnable
 ```
