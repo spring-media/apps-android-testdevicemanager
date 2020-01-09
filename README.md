@@ -1,3 +1,4 @@
+[![Generic badge](https://img.shields.io/badge/Version-1.2-green](https://shields.io/)
 [![Build Status](https://travis-ci.com/spring-media/apps-android-testdevicemanager.svg?token=xAVzxLGs5Eppk88QPiED&branch=master)](https://travis-ci.com/spring-media/apps-android-testdevicemanager)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
