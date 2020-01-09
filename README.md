@@ -21,9 +21,9 @@ The following things are handled by the plugin:
 
 - Checking for connection to a specific WLAN - A check for a connection to a specific WLAN will be performed
 
-- checking language set on the device
+- Checking language set on the device
 
-- setting language on the device - possible only when additional app is installed: AdbChangeLanguage available in Google Play: https://play.google.com/store/apps/details?id=net.sanapeli.adbchangelanguage
+- Setting language on the device - Possible only when additional app is installed: AdbChangeLanguage available in Google Play: https://play.google.com/store/apps/details?id=net.sanapeli.adbchangelanguage
 
 # Integration into the project
 ## Groovy
