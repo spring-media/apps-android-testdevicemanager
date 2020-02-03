@@ -52,10 +52,16 @@ class DeviceWrapper(val device: IDevice, val outputReceiverProvider: OutputRecei
     }
 
     fun checkWifi(wifi: String) {
-        val output = analyzeOutputOfShellCommandByRegex(DUMPSYS_WIFI, "mNetworkInfo .+ extra: \"(.+)\"")
+        val output: Matcher = try {
+            analyzeOutputOfShellCommandByRegex(DUMPSYS_WIFI, "mNetworkInfo .+ extra: \"(.+)\"")
+        }
+        catch (e: GradleException) {
+            // Android 9 & 10
+            analyzeOutputOfShellCommandByRegex(DUMPSYS_WIFI, "mWifiInfo\\s+SSID:\\s+(.+?),")
+        }
         val currentWifi = output.group(1)
         if (currentWifi != wifi) {
-            throw GradleException("Device ${getDetails()} is not connected to wifi with name $wifi")
+            throw GradleException("Device ${getDetails()} is not connected to WiFi named $wifi. Current WiFi is: $currentWifi")
         }
     }
 

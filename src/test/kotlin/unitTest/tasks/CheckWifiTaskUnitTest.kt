@@ -29,13 +29,16 @@ class CheckWifiTaskUnitTest : BaseUnitTest() {
     val bridge: AndroidDebugBridge = mock()
     val outputReceiver: CollectingOutputReceiver = mock()
     val outputReceiverProvider: OutputReceiverProvider = mock()
-    val defaultPluginTask: DefaultPluginTask = mock()
 
     val deviceCommunicator = DeviceCommunicator(bridge, outputReceiverProvider)
-    val noDevices = emptyArray<IDevice>()
-    val wifi = "wifi"
+    val wifi = "wlanName"
     val devices = arrayOf(device)
     val mNetworkInfo = "mNetworkInfo [type: WIFI[], extra: \"$wifi\"]"
+    val wifiDumpsysAndroid9 = "mWifiInfo SSID: $wifi, BSSID: 50:06:04:c2:f5:5d, MAC: a8:db:03:e0:e1:e5, Supplicant state: COMPLETED, RSSI: -62, Link speed: 270Mbps, Frequency: 5180MHz, Net ID: 2, Metered hint: false, GigaAp: false, VenueName: null, WifiMode: 4, score: 60\n" +
+            "mDhcpResults IP address 172.30.13.47/20 Gateway 172.30.15.245  DNS servers: [ 194.25.0.52 8.8.8.8 8.8.4.4 ] Domains asv.cor DHCP server /10.10.54.54 Vendor info null lease 1800 seconds\n" +
+            "mNetworkInfo [type: WIFI[], state: CONNECTED/CONNECTED, reason: (unspecified), extra: (none), failover: false, available: true, roaming: false]\n"
+
+
 
     lateinit var projectDir: File
     lateinit var project: Project
@@ -53,12 +56,13 @@ class CheckWifiTaskUnitTest : BaseUnitTest() {
         task.wifi = wifi
 
         given(outputReceiverProvider.get()).willReturn(outputReceiver)
+        given(bridge.devices).willReturn(devices)
+
     }
 
     @Test(expected = GradleException::class)
     fun `throw gradle exception when string in extension is empty`() {
         task.wifi = ""
-        given(bridge.devices).willReturn(devices)
 
         task.runTask1()
     }
@@ -66,15 +70,22 @@ class CheckWifiTaskUnitTest : BaseUnitTest() {
     @Test(expected = GradleException::class)
     fun `throw gradle exception when string in extension is blank`() {
         task.wifi = " "
-        given(bridge.devices).willReturn(devices)
 
         task.runTask1()
     }
 
     @Test
     fun `no gradle exception is thrown when connected to right wifi`() {
-        given(bridge.devices).willReturn(devices)
         given(outputReceiver.output).willReturn(mNetworkInfo)
+
+        task.runTask2(device)
+
+        thenDeviceShouldGetDetails(device)
+    }
+
+    @Test
+    fun `no gradle exception is thrown when connected to right wifi on Android 9 and 10`() {
+        given(outputReceiver.output).willReturn(wifiDumpsysAndroid9)
 
         task.runTask2(device)
 
