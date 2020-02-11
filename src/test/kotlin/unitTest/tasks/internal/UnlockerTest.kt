@@ -51,19 +51,19 @@ class UnlockerTest {
         given(outputReceiverProvider.get()).willReturn(outputReceiver)
     }
 
-//    @Test
-//    fun `nothing is done when power button is chosen`() {
-//        val classToTest = Unlocker(
-//                deviceWrapper,
-//                POWER_BUTTON.string,
-//                pin,
-//                password
-//        )
-//
-//        classToTest.unlock()
-//
-//        then(device).should(never()).executeShellCommand(any(), any())
-//    }
+    @Test
+    fun `nothing is done when power button is chosen`() {
+        val classToTest = Unlocker(
+                deviceWrapper,
+                POWER_BUTTON.string,
+                pin,
+                password
+        )
+
+        classToTest.unlock()
+
+        then(device).should(never()).executeShellCommand(any(), any())
+    }
 
     @Test
     fun `device can be unlocked by swipe`() {
@@ -93,57 +93,57 @@ class UnlockerTest {
         classToTestSwipe.unlock()
     }
 
-//    @Test(expected = GradleException::class)
-//    fun `gradle exception is thrown when pin is blank`() {
-//        val classToTest = Unlocker(
-//                deviceWrapper,
-//                PIN.string,
-//                emptyString,
-//                password
-//        )
-//
-//        classToTest.unlock()
-//    }
+    @Test(expected = GradleException::class)
+    fun `gradle exception is thrown when pin is blank`() {
+        val classToTest = Unlocker(
+                deviceWrapper,
+                PIN.string,
+                emptyString,
+                password
+        )
 
-//    @Test(expected = GradleException::class)
-//    fun `gradle exception is thrown when pin has less than 4 digits`() {
-//        val classToTest = Unlocker(
-//                deviceWrapper,
-//                PIN.string,
-//                wrongPin1,
-//                password
-//        )
-//
-//        classToTest.unlock()
-//    }
-//
-//    @Test(expected = GradleException::class)
-//    fun `gradle exception is thrown when pin is not only numbers`() {
-//        val classToTest = Unlocker(
-//                deviceWrapper,
-//                PIN.string,
-//                wrongPin2,
-//                password
-//        )
-//
-//        classToTest.unlock()
-//    }
-//
-//    @Test
-//    fun `device can be unlocked by pin`() {
-//        val classToTest = Unlocker(
-//                deviceWrapper,
-//                PIN.string,
-//                pin,
-//                password
-//        )
-//
-//        given(outputReceiver.output).willReturn(output)
-//
-//        classToTest.unlock()
-//
-//        thenPassPhraseShouldBeEntered(device, pin)
-//    }
+        classToTest.unlock()
+    }
+
+    @Test(expected = GradleException::class)
+    fun `gradle exception is thrown when pin has less than 4 digits`() {
+        val classToTest = Unlocker(
+                deviceWrapper,
+                PIN.string,
+                wrongPin1,
+                password
+        )
+
+        classToTest.unlock()
+    }
+
+    @Test(expected = GradleException::class)
+    fun `gradle exception is thrown when pin is not only numbers`() {
+        val classToTest = Unlocker(
+                deviceWrapper,
+                PIN.string,
+                wrongPin2,
+                password
+        )
+
+        classToTest.unlock()
+    }
+
+    @Test
+    fun `device can be unlocked by pin`() {
+        val classToTest = Unlocker(
+                deviceWrapper,
+                PIN.string,
+                pin,
+                password
+        )
+
+        given(outputReceiver.output).willReturn(output)
+
+        classToTest.unlock()
+
+        thenPassPhraseShouldBeEntered(device, pin)
+    }
 
     private fun thenPassPhraseShouldBeEntered(device: IDevice, passPhrase: String){
         then(device).should(Times(2)).executeShellCommand(eq(DUMPSYS_WINDOW), any())
@@ -151,64 +151,64 @@ class UnlockerTest {
         then(device).should().executeShellCommand(eq("$INPUT_TEXT $passPhrase"), any())
         then(device).should().executeShellCommand(eq(INPUT_PRESS_ENTER), any())
     }
-//
-//    @Test(expected = GradleException::class)
-//    fun `gradle exception is thrown when password is blank`() {
-//        val classToTest = Unlocker(
-//                deviceWrapper,
-//                PASSWORD.string,
-//                pin,
-//                wrongPassword1
-//        )
-//
-//        given(outputReceiver.output).willReturn(output)
-//
-//        classToTest.unlock()
-//    }
-//
-//    @Test(expected = GradleException::class)
-//    fun `gradle exception is thrown when password is empty`() {
-//        val classToTest = Unlocker(
-//                deviceWrapper,
-//                PASSWORD.string,
-//                pin,
-//                wrongPassword2
-//        )
-//
-//        given(outputReceiver.output).willReturn(output)
-//
-//        classToTest.unlock()
-//    }
-//
-//
-//    @Test
-//    fun `device can be unlocked by password`() {
-//        val classToTest = Unlocker(
-//                deviceWrapper,
-//                PASSWORD.string,
-//                pin,
-//                password
-//        )
-//
-//        given(outputReceiver.output).willReturn(output)
-//
-//        classToTest.unlock()
-//
-//
-//        thenPassPhraseShouldBeEntered(device, password)
-//    }
-//
-//    @Test(expected = GradleException::class)
-//    fun `gradle exception is thrown when wrong unlock method is chosen`() {
-//        val classToTest = Unlocker(
-//                deviceWrapper,
-//                wrongMethod,
-//                pin,
-//                password
-//        )
-//
-//        given(outputReceiver.output).willReturn(output)
-//
-//        classToTest.unlock()
-//    }
+
+    @Test(expected = GradleException::class)
+    fun `gradle exception is thrown when password is blank`() {
+        val classToTest = Unlocker(
+                deviceWrapper,
+                PASSWORD.string,
+                pin,
+                wrongPassword1
+        )
+
+        given(outputReceiver.output).willReturn(output)
+
+        classToTest.unlock()
+    }
+
+    @Test(expected = GradleException::class)
+    fun `gradle exception is thrown when password is empty`() {
+        val classToTest = Unlocker(
+                deviceWrapper,
+                PASSWORD.string,
+                pin,
+                wrongPassword2
+        )
+
+        given(outputReceiver.output).willReturn(output)
+
+        classToTest.unlock()
+    }
+
+
+    @Test
+    fun `device can be unlocked by password`() {
+        val classToTest = Unlocker(
+                deviceWrapper,
+                PASSWORD.string,
+                pin,
+                password
+        )
+
+        given(outputReceiver.output).willReturn(output)
+
+        classToTest.unlock()
+
+
+        thenPassPhraseShouldBeEntered(device, password)
+    }
+
+    @Test(expected = GradleException::class)
+    fun `gradle exception is thrown when wrong unlock method is chosen`() {
+        val classToTest = Unlocker(
+                deviceWrapper,
+                wrongMethod,
+                pin,
+                password
+        )
+
+        given(outputReceiver.output).willReturn(output)
+
+        classToTest.unlock()
+    }
 }
