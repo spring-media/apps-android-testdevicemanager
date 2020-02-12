@@ -8,6 +8,7 @@ import internal.ShellCommands.CHANGE_LANGUAGE_VIA_APP
 import internal.ShellCommands.DUMPSYS_INPUT_METHOD
 import internal.ShellCommands.DUMPSYS_WIFI
 import internal.ShellCommands.DUMPSYS_WINDOW
+import internal.ShellCommands.DUMPSYS_WINDOW_DISPLAYS
 import internal.ShellCommands.SETTINGS_GET_ANDROID_ID
 import internal.ShellCommands.SETTINGS_GET_GLOBAL
 import internal.ShellCommands.SETTINGS_GET_STAY_ON
@@ -32,7 +33,14 @@ class DeviceWrapper(val device: IDevice, val outputReceiverProvider: OutputRecei
     }
 
     fun getDeviceScreenResolution(): ScreenResolution {
-        val output = analyzeOutputOfShellCommandByRegex(DUMPSYS_WINDOW, "mUnrestrictedScreen.*?(\\d+)x(\\d+)")
+        val output: Matcher = try {
+            analyzeOutputOfShellCommandByRegex(DUMPSYS_WINDOW, "mUnrestrictedScreen.*?(\\d+)x(\\d+)")
+        }
+        catch (e: GradleException) {
+            // Android 9 & 10
+            analyzeOutputOfShellCommandByRegex(DUMPSYS_WINDOW_DISPLAYS, "mUnrestricted.*?\\[.*\\]\\[(\\d+),(\\d+)\\]")
+        }
+
         val screenWidth = output.group(1).trim().toInt()
         val screenHeight = output.group(2).trim().toInt()
         return ScreenResolution(xValue = screenWidth, yValue = screenHeight)
@@ -44,10 +52,16 @@ class DeviceWrapper(val device: IDevice, val outputReceiverProvider: OutputRecei
     }
 
     fun checkWifi(wifi: String) {
-        val output = analyzeOutputOfShellCommandByRegex(DUMPSYS_WIFI, "mNetworkInfo .+ extra: \"(.+)\"")
+        val output: Matcher = try {
+            analyzeOutputOfShellCommandByRegex(DUMPSYS_WIFI, "mNetworkInfo .+ extra: \"(.+)\"")
+        }
+        catch (e: GradleException) {
+            // Android 9 & 10
+            analyzeOutputOfShellCommandByRegex(DUMPSYS_WIFI, "mWifiInfo\\s+SSID:\\s+(.+?),")
+        }
         val currentWifi = output.group(1)
         if (currentWifi != wifi) {
-            throw GradleException("Device ${getDetails()} is not connected to wifi with name $wifi")
+            throw GradleException("Device ${getDetails()} is not connected to WiFi named $wifi. Current WiFi is: $currentWifi")
         }
     }
 
