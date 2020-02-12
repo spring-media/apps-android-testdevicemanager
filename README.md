@@ -1,4 +1,4 @@
-[![Generic badge](https://img.shields.io/badge/Version-1.2-green)](https://shields.io/)
+[![Generic badge](https://img.shields.io/badge/Version-1.3-green)](https://shields.io/)
 [![Build Status](https://travis-ci.com/spring-media/apps-android-testdevicemanager.svg?token=xAVzxLGs5Eppk88QPiED&branch=master)](https://travis-ci.com/spring-media/apps-android-testdevicemanager)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
@@ -31,7 +31,7 @@ The following things are handled by the plugin:
 ### Plugins DSL
 ```
 plugins {
-  id "de.welt.apps.testdevicemanager" version "1.2"
+  id "de.welt.apps.testdevicemanager" version "1.3"
 }
 ```
 ### Legacy plugin application
@@ -43,7 +43,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath "de.welt.apps:testdevicemanager:1.2"
+    classpath "de.welt.apps:testdevicemanager:1.3"
   }
 }
 
@@ -53,7 +53,7 @@ apply plugin: "de.welt.apps.testdevicemanager"
 ### Plugins DSL
 ```
 plugins {
-  id("de.welt.apps.testdevicemanager") version "1.2"
+  id("de.welt.apps.testdevicemanager") version "1.3"
 }
 ```
 ### Legacy plugin application
@@ -65,7 +65,7 @@ buildscript {
     }
   }
   dependencies {
-    classpath("de.welt.apps:testdevicemanager:1.2")
+    classpath("de.welt.apps:testdevicemanager:1.3")
   }
 }
 
@@ -85,7 +85,7 @@ testDeviceManager {
 # Compatibility
 The plugin was tested on several devices of different brands and different Android versions. 
 
-It will run on ```Android 4.1.2 - Android 8```. 
+It will run on ```Android 4.1.2 - Android 10```. 
 
 However, there might be device - OS version combinations that where not tested and might result in a not working plugin.
 
