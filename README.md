@@ -109,3 +109,5 @@ The following tasks will be added to the ```device setup``` section of the gradl
 ```
 Run these tasks before you run your espresso tests and setup your test devices.
 
+# License
+Testdevicemanager is available under the MIT license. See the LICENSE file for more info.
