@@ -11,6 +11,9 @@ When running Espresso tests for your Android projects on real devices you need t
 # Solution
 Testdevicemanager - It is a custom gradle plugin written in Kotlin. It uses ```adb commands``` to get and set device information. This way, no additional access rights for connected mobile devices are required.
 
+# Detailed description
+Find a more detailed decription here: https://medium.com/axel-springer-tech/preparing-android-devices-for-espresso-tests-with-testdevicemanager-5d8e63e43269
+
 # Features
 The following things are handled by the plugin:
 
